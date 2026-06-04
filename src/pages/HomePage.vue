@@ -8,6 +8,7 @@ import PandaMascot from '@/components/common/PandaMascot.vue'
       <PandaMascot mood="thinking" />
       <h1 class="hero-title">快乐拼音</h1>
       <p class="hero-subtitle">和拼拼一起学拼音！</p>
+      <p class="hero-dedication">💕 为瑶瑶定制的六一礼物</p>
     </section>
 
     <section class="feature-cards">
@@ -58,6 +59,13 @@ import PandaMascot from '@/components/common/PandaMascot.vue'
 .hero-subtitle {
   font-size: var(--font-size-lg);
   color: var(--color-text-secondary);
+}
+
+.hero-dedication {
+  font-size: var(--font-size-sm);
+  color: var(--color-tone-1);
+  font-weight: 500;
+  margin-top: var(--space-1);
 }
 
 .feature-cards {
