@@ -1,18 +1,16 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAudioMode } from '@/composables/useAudioMode'
 
 const route = useRoute()
 const { isAutoMode, toggle } = useAudioMode()
-const isHomePage = computed(() => route.name === 'home')
 </script>
 
 <template>
-  <header class="app-header" :class="{ 'is-home': isHomePage }">
+  <header class="app-header">
     <div class="header-inner">
       <RouterLink to="/" class="logo">
-        <svg width="32" height="32" viewBox="0 0 64 64" class="logo-icon">
+        <svg width="28" height="28" viewBox="0 0 64 64" class="logo-icon">
           <circle cx="32" cy="34" r="26" fill="#FF8C42"/>
           <circle cx="14" cy="14" r="9" fill="#2C3E50"/>
           <circle cx="50" cy="14" r="9" fill="#2C3E50"/>
@@ -65,11 +63,6 @@ const isHomePage = computed(() => route.name === 'home')
   height: var(--header-height);
 }
 
-.app-header.is-home {
-  background: linear-gradient(135deg, #FFF3E9 0%, #FFFFFF 100%);
-  border-bottom: 2px solid var(--color-brand-orange-light);
-}
-
 .header-inner {
   max-width: var(--max-content-width);
   margin: 0 auto;
@@ -84,20 +77,15 @@ const isHomePage = computed(() => route.name === 'home')
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-md);
   font-weight: 700;
   color: var(--color-brand-orange);
   flex-shrink: 0;
 }
 
 .logo-icon {
-  width: 28px;
-  height: 28px;
-}
-
-.is-home .logo-icon {
-  width: 36px;
-  height: 36px;
+  width: 26px;
+  height: 26px;
 }
 
 .header-right {
@@ -166,11 +154,5 @@ const isHomePage = computed(() => route.name === 'home')
 @media (max-width: 639px) {
   .toggle-label { display: none; }
   .audio-toggle { min-width: 36px; justify-content: center; padding: var(--space-1); }
-}
-
-@media (min-width: 1024px) {
-  .audio-toggle { height: 40px; }
-  .toggle-label { font-size: var(--font-size-sm); }
-  .is-home .logo-icon { width: 44px; height: 44px; }
 }
 </style>
