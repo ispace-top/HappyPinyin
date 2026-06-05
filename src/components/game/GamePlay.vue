@@ -19,9 +19,7 @@ const emit = defineEmits<{
 
 // re-expose for template
 const state = props.engine.state as GameState
-const config = props.engine.config
 const currentRoundData = props.engine.currentRoundData
-const stars = props.engine.stars
 
 // per-level progress bar color
 const progressColor = computed(() => {
