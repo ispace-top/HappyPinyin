@@ -52,6 +52,11 @@ const displayResult = computed(() => {
   return formatResultSyllable(resultSyllable.value)
 })
 
+const resultSpeakAnchor = computed(() => {
+  const initEl = initials.find(i => i.text === state.selectedInitial)
+  return initEl?.pronunciation ?? ''
+})
+
 const resultCharInfo = computed(() => {
   if (!resultSyllable.value) return null
   return getSyllableInfo(resultSyllable.value)
@@ -220,7 +225,7 @@ const initialItems = computed(() =>
         }"
       >
         <template #result-actions>
-          <AudioButton text="" @click="speakResult" />
+          <AudioButton :text="resultSpeakAnchor" @click="speakResult" />
         </template>
       </PinyinCard>
 
