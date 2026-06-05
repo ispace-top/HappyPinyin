@@ -134,13 +134,19 @@ const initialItems = computed(() =>
   <div class="builder-page">
     <!-- Unified toolbar: back button + stepper + prompt -->
     <div class="builder-toolbar">
-      <button v-if="state.step !== 'initial'" class="back-btn" @click="handleBack">← 上一步</button>
-      <BuilderStepper :current-step="state.step" />
+      <div class="back-btn-area">
+        <button v-if="state.step !== 'initial'" class="back-btn" @click="handleBack">← 上一步</button>
+      </div>
+      <div class="stepper-wrap">
+        <BuilderStepper :current-step="state.step" />
+      </div>
       <p v-if="state.step === 'initial'" class="step-prompt">选择一个声母开始吧！</p>
       <p v-else-if="state.step === 'final'" class="step-prompt">
         选了声母 <strong>{{ state.selectedInitial }}</strong>，选一个韵母吧！
       </p>
-      <p v-else-if="state.step === 'tone'" class="step-prompt">选声调：</p>
+      <p v-else-if="state.step === 'tone'" class="step-prompt">
+        已选 <strong>{{ selectionPreview }}</strong>，选声调吧！
+      </p>
     </div>
 
     <!-- Step: Initial -->
@@ -237,9 +243,25 @@ const initialItems = computed(() =>
 
 .builder-toolbar {
   display: grid;
-  grid-template-columns: 60px 1fr auto;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
   padding: var(--space-1) 0;
+}
+
+.back-btn-area {
+  justify-self: start;
+}
+
+.back-btn {
+  white-space: nowrap;
+}
+
+.stepper-wrap {
+  justify-self: center;
+}
+
+.step-prompt {
+  justify-self: end;
 }
 
 .step-prompt {
@@ -261,6 +283,7 @@ const initialItems = computed(() =>
   transition: all var(--transition-fast);
   font-family: inherit;
   flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .back-btn:hover {
