@@ -5,7 +5,7 @@ import { useSpeech } from '@/composables/useSpeech'
 import { initials } from '@/data/initials'
 import { medialDisplay, finalDisplay, pinyinToSpeech } from '@/utils/pinyinFilter'
 import { formatResultSyllable } from '@/utils/toneMark'
-import { getSyllableInfo } from '@/utils/syllableChars'
+import { getSyllableInfo, getCharSpeech } from '@/utils/syllableChars'
 import type { SelectorItem } from '@/components/builder/SelectorGrid.vue'
 import BuilderStepper from '@/components/builder/BuilderStepper.vue'
 import SelectorGrid from '@/components/builder/SelectorGrid.vue'
@@ -85,7 +85,7 @@ watch(() => state.step, (newStep) => {
 
   const charInfo = getSyllableInfo(resultSyllable.value)
   if (charInfo) {
-    sequence.push(charInfo[0])
+    sequence.push(getCharSpeech(resultSyllable.value))
     sequence.push(charInfo[1])
     sequence.push(charInfo[2])
   }
@@ -103,8 +103,7 @@ function handleReset() {
 
 function speakResult() {
   if (!resultSyllable.value) return
-  const charInfo = getSyllableInfo(resultSyllable.value)
-  const text = charInfo ? charInfo[0] : displayResult.value
+  const text = getCharSpeech(resultSyllable.value)
   speak(text, { rate: 0.5 })
 }
 

@@ -429,6 +429,50 @@ const SYLLABLE_DATA_3: Record<string, [string, string, string]> = {
   'wēng':['翁', '老翁', '渔翁'], 'wèng':['瓮', '水瓮', '瓮中捉鳖'],
 }
 
+// Speech hints for polyphonic characters that TTS misreads in isolation.
+// When a hint exists, it is spoken instead of the bare character.
+const SPEECH_HINTS: Record<string, string> = {
+  'běng': '绷着脸',  // TTS defaults 绷 to bēng, phrase gives context
+  'dé': '得到的得',
+  'děi': '得去的得',
+  'zhǎng': '长大的长',
+  'zhǒng': '种子的种',
+  'zhòng': '种地的种',
+  'shǎo': '多少的少',
+  'shào': '少年的少',
+  'wéi': '成为的为',
+  'wèi': '为什么的为',
+  'xīng': '兴奋的兴',
+  'xìng': '高兴的兴',
+  'háng': '银行的行',
+  'xíng': '行走的行',
+  'cháng': '长短的长',
+  'gān': '干杯的干',
+  'gàn': '干活的干',
+  'hái': '还有的还',
+  'huán': '归还的还',
+  'kān': '看门的看',
+  'kàn': '看见的看',
+  'kōng': '天空的空',
+  'kòng': '空白的空',
+  'fā': '发现的发',
+  'fà': '头发的发',
+  'juǎn': '卷起的卷',
+  'juàn': '试卷的卷',
+  'dāng': '当时的当',
+  'dàng': '上当的当',
+  'biàn': '方便的便',
+  'pián': '便宜的便',
+  'jiǎ': '假装的假',
+  'jià': '假期的假',
+  'zhǐ': '只有的只',
+  'zhī': '一只的只',
+  'chǔ': '处理的处',
+  'chù': '处所的处',
+  'dōu': '都来的都',
+  'dū': '首都的都',
+}
+
 // Merge all
 const ALL_SYLLABLE_DATA: Record<string, [string, string, string]> = { ...SYLLABLE_DATA, ...SYLLABLE_DATA_2, ...SYLLABLE_DATA_3 }
 
@@ -437,6 +481,16 @@ const ALL_SYLLABLE_DATA: Record<string, [string, string, string]> = { ...SYLLABL
  */
 export function getSyllableInfo(toneMarkedSyllable: string): [string, string, string] | null {
   return ALL_SYLLABLE_DATA[toneMarkedSyllable] ?? null
+}
+
+/**
+ * Get the best text to speak for a tone-marked syllable.
+ * Uses speech hint for polyphones that TTS misreads.
+ */
+export function getCharSpeech(toneMarkedSyllable: string): string {
+  const hint = SPEECH_HINTS[toneMarkedSyllable]
+  if (hint) return hint
+  return ALL_SYLLABLE_DATA[toneMarkedSyllable]?.[0] ?? toneMarkedSyllable
 }
 
 /**
