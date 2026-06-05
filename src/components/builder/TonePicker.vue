@@ -70,7 +70,7 @@ const tones = computed(() => {
   align-items: center;
   justify-content: center;
   gap: var(--space-1);
-  min-height: 110px;
+  min-height: 130px;
   padding: var(--space-2) var(--space-2);
   background: var(--tone-gradient);
   border: 3px solid transparent;
@@ -131,7 +131,7 @@ const tones = computed(() => {
 
 @media (min-width: 768px) {
   .tone-card {
-    min-height: 120px;
+    min-height: 140px;
   }
   .tone-symbol {
     font-size: 3rem;

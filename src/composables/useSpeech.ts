@@ -1,12 +1,15 @@
 import { ref } from 'vue'
 import { speechService, type SpeechOptions } from '@/services/speechService'
 
+// Module-level singleton — ALL components share the same isSpeaking state
+const isSpeaking = ref(false)
+
 export function useSpeech() {
-  const isSpeaking = ref(false)
   const isSupported = speechService.isSupported()
 
   function speak(text: string, options?: SpeechOptions): void {
     if (!speechService.isSupported()) return
+    speechService.stop()
     isSpeaking.value = true
     speechService.speak(text, options)
     const estimatedDuration = Math.max(text.length * 150, 600)
@@ -15,16 +18,13 @@ export function useSpeech() {
     }, estimatedDuration)
   }
 
-  /**
-   * Speak multiple texts in sequence. Each text is queued and spoken after the previous finishes.
-   */
   function speakSequence(texts: string[], options?: SpeechOptions): void {
     if (!speechService.isSupported()) return
+    speechService.stop()
     isSpeaking.value = true
     texts.forEach((text) => {
       speechService.speak(text, options)
     })
-    // Estimate total duration for isSpeaking flag
     const totalDuration = texts.reduce((sum, t) => sum + Math.max(t.length * 150, 500), 0) + 300
     setTimeout(() => {
       isSpeaking.value = false

@@ -6,7 +6,6 @@ defineProps<{
   element: PinyinElement
   selected?: boolean
   variant?: 'browse' | 'select' | 'result'
-  compact?: boolean
   resultData?: {
     processText: string
     syllable: string
@@ -63,7 +62,7 @@ function descriptionColor(category: string, subCategory?: string): string {
   <div
     v-else
     class="pinyin-card"
-    :class="{ selected, selectable: variant === 'select', compact }"
+    :class="{ selected, selectable: variant === 'select' }"
     :style="{
       '--card-gradient': cardGradient(element.category, element.subCategory),
       '--card-desc-color': descriptionColor(element.category, element.subCategory),
@@ -91,7 +90,7 @@ function descriptionColor(category: string, subCategory?: string): string {
   border: 3px solid transparent;
   box-shadow: var(--shadow-card);
   transition: all var(--transition-normal);
-  min-height: 140px;
+  min-height: 130px;
   cursor: pointer;
   position: relative;
   overflow: hidden;
@@ -159,48 +158,8 @@ function descriptionColor(category: string, subCategory?: string): string {
 
 @media (min-width: 768px) {
   .pinyin-card {
-    min-height: 150px;
-    padding: var(--space-4);
-    gap: var(--space-2);
+    min-height: 140px;
   }
-
-  .card-emoji {
-    font-size: 3rem;
-  }
-
-  .pinyin-desc {
-    font-size: var(--font-size-base);
-  }
-
-  .pinyin-text {
-    font-size: 2.5rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .pinyin-text {
-    font-size: 2.25rem;
-  }
-}
-
-/* === Compact variant === */
-.pinyin-card.compact {
-  min-height: 110px;
-  padding: var(--space-2) var(--space-2);
-  gap: var(--space-1);
-  border-radius: var(--radius-lg);
-}
-
-.pinyin-card.compact .card-emoji { font-size: 1.75rem; }
-.pinyin-card.compact .pinyin-text { font-size: 1.75rem; }
-.pinyin-card.compact .pinyin-desc { font-size: var(--font-size-xs); }
-
-@media (min-width: 768px) {
-  .pinyin-card.compact {
-    min-height: 120px;
-  }
-  .pinyin-card.compact .card-emoji { font-size: 2rem; }
-  .pinyin-card.compact .pinyin-text { font-size: 2rem; }
 }
 
 /* === Result Card Styles === */

@@ -157,7 +157,6 @@ const initialItems = computed(() =>
           :key="item.value"
           :element="item.element"
           variant="select"
-          compact
           :selected="state.selectedInitial === item.value"
           @select="handleInitialSelect(item)"
         />
@@ -179,7 +178,6 @@ const initialItems = computed(() =>
           :key="el.id"
           :element="el"
           variant="select"
-          compact
           :selected="state.selectedFinal === el.text"
           @select="handleFinalSelect(el)"
         />
