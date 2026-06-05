@@ -52,6 +52,10 @@ jobs:
             echo "Error: version is empty, aborting"
             exit 1
           fi
+          # Switch to latest main to avoid push rejection
+          git fetch origin main
+          git checkout main
+          git reset --hard origin/main
           jq --arg v "${V}" '.version = $v' package.json > package.tmp.json && mv package.tmp.json package.json
           git config user.name "github-actions"
           git config user.email "actions@github.com"
