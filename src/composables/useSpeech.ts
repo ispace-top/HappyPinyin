@@ -1,8 +1,8 @@
 import { ref } from 'vue'
 import { speechService, type SpeechOptions } from '@/services/speechService'
 
-// Module-level singleton — ALL components share the same isSpeaking state
-const isSpeaking = ref(false)
+// Track which text is currently being spoken — only the matching AudioButton animates
+const speakingText = ref<string | null>(null)
 
 export function useSpeech() {
   const isSupported = speechService.isSupported()
@@ -10,30 +10,38 @@ export function useSpeech() {
   function speak(text: string, options?: SpeechOptions): void {
     if (!speechService.isSupported()) return
     speechService.stop()
-    isSpeaking.value = true
+    speakingText.value = text
     speechService.speak(text, options)
     const estimatedDuration = Math.max(text.length * 150, 600)
     setTimeout(() => {
-      isSpeaking.value = false
+      if (speakingText.value === text) {
+        speakingText.value = null
+      }
     }, estimatedDuration)
   }
 
   function speakSequence(texts: string[], options?: SpeechOptions): void {
     if (!speechService.isSupported()) return
     speechService.stop()
-    isSpeaking.value = true
-    texts.forEach((text) => {
-      speechService.speak(text, options)
+    const first = texts[0]
+    if (first) speakingText.value = first
+    texts.forEach((t) => {
+      speechService.speak(t, options)
     })
     const totalDuration = texts.reduce((sum, t) => sum + Math.max(t.length * 150, 500), 0) + 300
     setTimeout(() => {
-      isSpeaking.value = false
+      speakingText.value = null
     }, totalDuration)
   }
 
   function stop(): void {
     speechService.stop()
-    isSpeaking.value = false
+    speakingText.value = null
+  }
+
+  function isSpeaking(text?: string): boolean {
+    if (text !== undefined) return speakingText.value === text
+    return speakingText.value !== null
   }
 
   return { speak, speakSequence, stop, isSpeaking, isSupported }

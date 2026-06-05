@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useSpeech } from '@/composables/useSpeech'
 
 const props = defineProps<{
@@ -8,6 +9,8 @@ const props = defineProps<{
 }>()
 
 const { speak, isSpeaking, isSupported } = useSpeech()
+
+const speaking = computed(() => isSpeaking(props.text))
 
 function handleClick() {
   if (!props.disabled) {
@@ -19,13 +22,13 @@ function handleClick() {
 <template>
   <button
     class="audio-btn"
-    :class="{ speaking: isSpeaking, disabled: disabled || !isSupported, subtle }"
+    :class="{ speaking, disabled: disabled || !isSupported, subtle }"
     :disabled="disabled || !isSupported"
     :title="isSupported ? '点击发音' : '您的浏览器不支持语音'"
     @click.stop="handleClick"
   >
-    <span class="speaker-icon">{{ isSupported ? (isSpeaking ? '🔊' : '🔈') : '🔇' }}</span>
-    <span v-if="isSpeaking" class="wave-ring" />
+    <span class="speaker-icon">{{ isSupported ? (speaking ? '🔊' : '🔈') : '🔇' }}</span>
+    <span v-if="speaking" class="wave-ring" />
   </button>
 </template>
 
