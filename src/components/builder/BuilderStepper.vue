@@ -42,25 +42,24 @@ const stepOrder: BuilderStep[] = ['initial', 'final', 'tone', 'result']
   align-items: center;
   justify-content: center;
   gap: 0;
-  padding: var(--space-4) 0;
+  padding: var(--space-1) 0;
 }
 
 .step {
   display: flex;
-  flex-direction: column;
   align-items: center;
   gap: var(--space-1);
   flex-shrink: 0;
 }
 
 .step-circle {
-  width: 36px;
-  height: 36px;
+  width: 22px;
+  height: 22px;
   border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--font-size-sm);
+  font-size: 0.625rem;
   font-weight: 700;
   transition: all var(--transition-normal);
   border: 2px solid var(--color-border);
@@ -81,16 +80,12 @@ const stepOrder: BuilderStep[] = ['initial', 'final', 'tone', 'result']
   color: #fff;
 }
 
-.step.upcoming .step-circle {
-  opacity: 0.5;
-}
+.step.upcoming .step-circle { opacity: 0.5; }
 
-.check {
-  font-size: var(--font-size-base);
-}
+.check { font-size: 0.625rem; }
 
 .step-label {
-  font-size: var(--font-size-xs);
+  font-size: 0.625rem;
   color: var(--color-text-secondary);
   font-weight: 500;
   white-space: nowrap;
@@ -102,38 +97,22 @@ const stepOrder: BuilderStep[] = ['initial', 'final', 'tone', 'result']
 }
 
 .step-line {
-  width: 32px;
+  width: 20px;
   height: 2px;
   background: var(--color-border);
   margin: 0 var(--space-1);
-  margin-bottom: 18px;
   transition: background var(--transition-normal);
 }
 
-.step-line.done {
-  background: var(--color-success);
-}
+.step-line.done { background: var(--color-success); }
 
 @keyframes pulse {
   0%, 100% { box-shadow: 0 0 0 0 var(--color-brand-orange-bg); }
-  50% { box-shadow: 0 0 0 6px transparent; }
+  50% { box-shadow: 0 0 0 4px transparent; }
 }
 
-/* Compact on PC */
 @media (min-width: 1024px) {
-  .stepper {
-    padding: var(--space-2) 0;
-  }
-
-  .step-circle {
-    width: 28px;
-    height: 28px;
-    font-size: var(--font-size-xs);
-  }
-
-  .step-line {
-    width: 24px;
-    margin-bottom: 12px;
-  }
+  .step-circle { width: 20px; height: 20px; }
+  .step-line { width: 16px; }
 }
 </style>

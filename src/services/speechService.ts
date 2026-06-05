@@ -35,6 +35,15 @@ class SpeechService {
     return this.synth !== null
   }
 
+  private onEndCallbacks: Array<() => void> = []
+
+  onEnd(cb: () => void): () => void {
+    this.onEndCallbacks.push(cb)
+    return () => {
+      this.onEndCallbacks = this.onEndCallbacks.filter(c => c !== cb)
+    }
+  }
+
   speak(text: string, options?: SpeechOptions): void {
     if (!this.synth) return
     if (this.speaking) {
@@ -56,6 +65,10 @@ class SpeechService {
     utterance.onend = () => {
       this.speaking = false
       this.processQueue()
+      // If queue is also empty, fire end callbacks
+      if (this.queue.length === 0 && !this.speaking) {
+        this.onEndCallbacks.forEach(cb => cb())
+      }
     }
     utterance.onerror = (event) => {
       if (event.error !== 'interrupted') {
@@ -63,6 +76,9 @@ class SpeechService {
       }
       this.speaking = false
       this.processQueue()
+      if (this.queue.length === 0 && !this.speaking) {
+        this.onEndCallbacks.forEach(cb => cb())
+      }
     }
 
     this.speaking = true
