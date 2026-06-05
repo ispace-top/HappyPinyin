@@ -6,7 +6,7 @@ import PandaMascot from '@/components/common/PandaMascot.vue'
   <div class="home-page">
     <section class="hero">
       <div class="hero-left">
-        <PandaMascot mood="thinking" size="large" showBubble bubbleText="你好呀！我是拼拼～" />
+        <PandaMascot mood="thinking" size="medium" showBubble bubbleText="你好呀！我是拼拼～" />
       </div>
       <div class="hero-right">
         <h1 class="hero-title">快乐拼音</h1>
@@ -220,16 +220,42 @@ import PandaMascot from '@/components/common/PandaMascot.vue'
 }
 
 @media (min-width: 1024px) {
-  .hero {
+  .home-page {
     flex-direction: row;
     justify-content: center;
-    align-items: center;
-    gap: var(--space-12);
-    padding: var(--space-12) var(--space-8);
+    align-items: flex-start;
+    gap: var(--space-8);
+    padding-top: var(--space-12);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .hero {
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: 0;
+    flex-shrink: 0;
+  }
+
+  .hero-title {
+    font-size: var(--font-size-2xl);
+  }
+
+  .hero-subtitle {
+    font-size: var(--font-size-sm);
   }
 
   .hero-right {
-    align-items: flex-start;
+    align-items: center;
+  }
+
+  .feature-cards {
+    flex: 1;
+    max-width: 420px;
+  }
+
+  .tips {
+    display: none;
   }
 }
 </style>

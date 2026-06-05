@@ -13,7 +13,6 @@ import SelectorGrid from '@/components/builder/SelectorGrid.vue'
 import MedialChips from '@/components/builder/MedialChips.vue'
 import TonePicker from '@/components/builder/TonePicker.vue'
 import PinyinCard from '@/components/common/PinyinCard.vue'
-import PandaMascot from '@/components/common/PandaMascot.vue'
 import CelebrationEffect from '@/components/common/CelebrationEffect.vue'
 import AudioButton from '@/components/common/AudioButton.vue'
 
@@ -189,12 +188,14 @@ const initialItems = computed(() =>
           words: resultCharInfo[1],
           phrase: resultCharInfo[2],
         }"
-      />
+      >
+        <template #result-actions>
+          <AudioButton :text="resultCharInfo?.[0] ?? displayResult" @click="speakResult" />
+        </template>
+      </PinyinCard>
 
       <div class="result-actions-bar">
-        <AudioButton :text="resultCharInfo?.[0] ?? displayResult" @click="speakResult" />
         <button class="reset-btn" @click="handleReset">再拼一个</button>
-        <PandaMascot mood="happy" size="small" showBubble bubbleText="太棒了!" />
       </div>
     </div>
 

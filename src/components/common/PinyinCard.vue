@@ -55,6 +55,7 @@ function descriptionColor(category: string, subCategory?: string): string {
     <p class="result-syllable-plain">({{ resultData.plainSyllable }})</p>
     <p class="result-char-display">{{ resultData.character }}</p>
     <p class="result-words-display">{{ resultData.words }} · {{ resultData.phrase }}</p>
+    <slot name="result-actions" />
   </div>
 
   <!-- Browse/Select variants -->
