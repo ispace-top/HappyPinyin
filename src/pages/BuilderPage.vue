@@ -4,12 +4,12 @@ import { useBuilder } from '@/composables/useBuilder'
 import { useSpeech } from '@/composables/useSpeech'
 import { useAudioMode } from '@/composables/useAudioMode'
 import { initials } from '@/data/initials'
+import { allFinals } from '@/data/finals'
 import { medialDisplay, finalDisplay, pinyinToSpeech } from '@/utils/pinyinFilter'
 import { formatResultSyllable } from '@/utils/toneMark'
 import { getSyllableInfo, getCharSpeech } from '@/utils/syllableChars'
-import type { SelectorItem } from '@/components/builder/SelectorGrid.vue'
+import type { PinyinElement } from '@/types/pinyin'
 import BuilderStepper from '@/components/builder/BuilderStepper.vue'
-import SelectorGrid from '@/components/builder/SelectorGrid.vue'
 import MedialChips from '@/components/builder/MedialChips.vue'
 import TonePicker from '@/components/builder/TonePicker.vue'
 import PinyinCard from '@/components/common/PinyinCard.vue'
@@ -23,11 +23,20 @@ const { shouldAutoSpeak } = useAudioMode()
 
 const showCelebration = computed(() => state.step === 'result' && resultSyllable.value !== null)
 
-const finalItems = computed<SelectorItem[]>(() =>
-  availableFinals.value.map(f => ({
-    value: f,
-    label: finalDisplay(f, state.selectedMedial),
-  }))
+// Build PinyinElement objects for available finals, looking up emoji from allFinals
+const finalElements = computed<PinyinElement[]>(() =>
+  availableFinals.value.map(f => {
+    const match = allFinals.find(el => el.text === f || (f === 'üe' && el.text === 'üe') || (f === 'ün' && el.text === 'ün'))
+    return {
+      id: `builder-final-${f}`,
+      text: finalDisplay(f, state.selectedMedial),
+      category: 'final' as const,
+      subCategory: match?.subCategory,
+      pronunciation: match?.pronunciation ?? finalDisplay(f, state.selectedMedial),
+      emoji: match?.emoji,
+      description: match?.description,
+    }
+  })
 )
 
 const selectionPreview = computed(() => {
@@ -61,10 +70,10 @@ function handleMedialSelect(medial: string | null) {
   speak(pinyinToSpeech(medialDisplay(medial)), { rate: 0.5 })
 }
 
-function handleFinalSelect(item: SelectorItem) {
-  dispatch({ type: 'SELECT_FINAL', final: item.value })
+function handleFinalSelect(element: PinyinElement) {
+  dispatch({ type: 'SELECT_FINAL', final: element.text })
   if (!shouldAutoSpeak()) return
-  speak(pinyinToSpeech(finalDisplay(item.value, state.selectedMedial)), { rate: 0.5 })
+  speak(pinyinToSpeech(finalDisplay(element.text, state.selectedMedial)), { rate: 0.5 })
 }
 
 function handleToneSelect(tone: number) {
@@ -156,11 +165,17 @@ const initialItems = computed(() =>
         @select="handleMedialSelect"
       />
 
-      <SelectorGrid
-        :items="finalItems"
-        :selected-value="state.selectedFinal"
-        @select="handleFinalSelect"
-      />
+      <div class="finals-grid">
+        <PinyinCard
+          v-for="el in finalElements"
+          :key="el.id"
+          :element="el"
+          variant="select"
+          compact
+          :selected="state.selectedFinal === el.text"
+          @select="handleFinalSelect(el)"
+        />
+      </div>
     </div>
 
     <!-- Step: Tone -->
@@ -259,7 +274,14 @@ const initialItems = computed(() =>
 .initials-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-3);
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.finals-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-2);
   width: 100%;
 }
 
@@ -377,10 +399,12 @@ const initialItems = computed(() =>
 /* PC Layout Optimization */
 @media (min-width: 480px) {
   .initials-grid { grid-template-columns: repeat(3, 1fr); }
+  .finals-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
 @media (min-width: 768px) {
   .initials-grid { grid-template-columns: repeat(4, 1fr); }
+  .finals-grid { grid-template-columns: repeat(4, 1fr); }
   .result-syllable { font-size: 6rem; }
   .result-char { font-size: 4rem; }
 }
@@ -411,6 +435,9 @@ const initialItems = computed(() =>
 
   .initials-grid {
     grid-template-columns: repeat(8, 1fr);
+  }
+  .finals-grid {
+    grid-template-columns: repeat(6, 1fr);
   }
 
   .result-layout {

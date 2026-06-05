@@ -48,20 +48,23 @@ if (tabParam && tabs.some(t => t.key === tabParam)) {
 
 <template>
   <div class="browser-page">
-    <h1 class="page-title">读一读</h1>
-    <p class="page-subtitle">点击卡片先听发音，再听助记口诀</p>
-
-    <div class="tabs">
-      <button
-        v-for="tab in tabs"
-        :key="tab.key"
-        class="tab-btn"
-        :class="{ active: activeTab === tab.key }"
-        @click="activeTab = tab.key"
-      >
-        <span class="tab-label">{{ tab.label }}</span>
-        <span class="tab-count">{{ tab.count }}</span>
-      </button>
+    <div class="browser-header">
+      <div class="browser-title-row">
+        <h1 class="page-title">读一读</h1>
+        <p class="page-subtitle">点击卡片先听发音，再听助记口诀</p>
+      </div>
+      <div class="tabs">
+        <button
+          v-for="tab in tabs"
+          :key="tab.key"
+          class="tab-btn"
+          :class="{ active: activeTab === tab.key }"
+          @click="activeTab = tab.key"
+        >
+          <span class="tab-label">{{ tab.label }}</span>
+          <span class="tab-count">{{ tab.count }}</span>
+        </button>
+      </div>
     </div>
 
     <div class="cards-grid">
@@ -82,20 +85,35 @@ if (tabParam && tabs.some(t => t.key === tabParam)) {
 .browser-page {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
-  padding-top: var(--space-6);
+  gap: var(--space-4);
+  padding-top: var(--space-4);
+}
+
+.browser-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.browser-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  flex-shrink: 0;
 }
 
 .page-title {
-  font-size: var(--font-size-2xl);
+  font-size: var(--font-size-xl);
   font-weight: 800;
   color: var(--color-text-primary);
+  white-space: nowrap;
 }
 
 .page-subtitle {
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
-  margin-top: -12px;
 }
 
 .tabs {
@@ -104,6 +122,7 @@ if (tabParam && tabs.some(t => t.key === tabParam)) {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   padding-bottom: var(--space-1);
+  flex-shrink: 0;
 }
 
 .tabs::-webkit-scrollbar {
