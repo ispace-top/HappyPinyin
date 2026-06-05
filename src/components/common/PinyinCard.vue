@@ -19,6 +19,14 @@ defineEmits<{
   select: []
 }>()
 
+function pinyinFontSize(text: string): string {
+  const len = text.length
+  if (len <= 2) return '1.75rem'
+  if (len <= 3) return '1.35rem'
+  if (len <= 4) return '1.1rem'
+  return '0.9rem'
+}
+
 function cardGradient(category: string, subCategory?: string): string {
   switch (category) {
     case 'initial': return 'linear-gradient(135deg, #E8F0FA 0%, #D0E3F5 100%)'
@@ -68,7 +76,7 @@ function descriptionColor(category: string, subCategory?: string): string {
     @click="$emit('select')"
   >
     <span v-if="element.emoji" class="card-emoji" aria-hidden="true">{{ element.emoji }}</span>
-    <p class="pinyin-text">{{ element.text }}</p>
+    <p class="pinyin-text" :style="{ fontSize: pinyinFontSize(element.text) }">{{ element.text }}</p>
     <p v-if="element.description" class="pinyin-desc">{{ element.description }}</p>
     <AudioButton v-if="variant === 'select'" :text="element.pronunciation" />
     <AudioButton v-else :text="element.pronunciation" subtle />
