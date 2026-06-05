@@ -30,14 +30,13 @@ import PandaMascot from '@/components/common/PandaMascot.vue'
         </div>
       </RouterLink>
 
-      <div class="feature-card card-play disabled" aria-disabled="true">
-        <span class="feature-icon">🎮</span>
+      <RouterLink to="/game" class="feature-card card-play">
+        <span class="feature-icon">🫧</span>
         <div class="feature-text">
           <h2 class="feature-title">玩一玩</h2>
-          <p class="feature-desc">趣味游戏即将上线</p>
+          <p class="feature-desc">听音找拼音，点破七彩泡泡!</p>
         </div>
-        <span class="coming-soon">即将推出</span>
-      </div>
+      </RouterLink>
     </section>
 
     <section class="tips">
@@ -127,11 +126,10 @@ import PandaMascot from '@/components/common/PandaMascot.vue'
 }
 
 .card-play {
-  border-left-color: var(--color-border);
-  opacity: 0.55;
-  cursor: default;
-  pointer-events: none;
+  border-left-color: var(--color-game, #4ECDC4);
 }
+
+.card-play .feature-icon { background: rgba(78, 205, 196, 0.12); }
 
 .feature-icon {
   font-size: 2.5rem;
@@ -147,7 +145,6 @@ import PandaMascot from '@/components/common/PandaMascot.vue'
 
 .card-read .feature-icon { background: var(--color-initial-light); }
 .card-build .feature-icon { background: var(--color-brand-orange-bg); }
-.card-play .feature-icon { background: var(--color-divider); }
 
 .feature-text {
   display: flex;
@@ -165,17 +162,6 @@ import PandaMascot from '@/components/common/PandaMascot.vue'
 .feature-desc {
   font-size: var(--font-size-base);
   color: var(--color-text-secondary);
-}
-
-.coming-soon {
-  position: absolute;
-  top: var(--space-3);
-  right: var(--space-3);
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
-  background: var(--color-divider);
-  padding: 2px 8px;
-  border-radius: var(--radius-full);
 }
 
 .tips {
