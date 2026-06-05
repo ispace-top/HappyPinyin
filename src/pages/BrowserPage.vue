@@ -188,4 +188,8 @@ if (tabParam && tabs.some(t => t.key === tabParam)) {
 @media (min-width: 1024px) {
   .cards-grid { grid-template-columns: repeat(8, 1fr); }
 }
+
+@media (max-width: 767px) {
+  .browser-title-row { display: none; }
+}
 </style>

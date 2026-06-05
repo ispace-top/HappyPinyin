@@ -151,8 +151,9 @@ const { isAutoMode, toggle } = useAudioMode()
 
 .toggle-icon { font-size: var(--font-size-md); line-height: 1; }
 
-@media (max-width: 639px) {
+@media (max-width: 767px) {
   .toggle-label { display: none; }
   .audio-toggle { min-width: 36px; justify-content: center; padding: var(--space-1); }
+  .header-nav { display: none; }
 }
 </style>

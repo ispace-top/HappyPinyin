@@ -476,4 +476,30 @@ const initialItems = computed(() =>
     padding: var(--space-2) var(--space-4);
   }
 }
+
+@media (max-width: 767px) {
+  .builder-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .back-btn-area {
+    flex: 0 0 auto;
+  }
+
+  .stepper-wrap {
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: center;
+  }
+
+  .step-prompt {
+    flex: 0 0 100%;
+    text-align: center;
+    white-space: normal;
+    margin-top: var(--space-2);
+  }
+}
 </style>
