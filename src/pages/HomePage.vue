@@ -216,7 +216,7 @@ import PandaMascot from '@/components/common/PandaMascot.vue'
     justify-content: center;
     align-items: center;
     gap: var(--space-12);
-    min-height: calc(100dvh - var(--header-height));
+    min-height: calc(100dvh - var(--header-height) - 80px);
     max-width: 1000px;
     margin: 0 auto;
     padding: 0;
