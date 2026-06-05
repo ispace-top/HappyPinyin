@@ -132,17 +132,26 @@ const initialItems = computed(() =>
 
 <template>
   <div class="builder-page">
-    <BuilderStepper :current-step="state.step" />
+    <!-- Unified toolbar: back button + stepper + prompt -->
+    <div class="builder-toolbar">
+      <button v-if="state.step !== 'initial'" class="back-btn" @click="handleBack">← 返回</button>
+      <BuilderStepper :current-step="state.step" />
+      <p v-if="state.step === 'initial'" class="step-prompt">选择一个声母开始吧！</p>
+      <p v-else-if="state.step === 'final'" class="step-prompt">
+        选了声母 <strong>{{ state.selectedInitial }}</strong>，选一个韵母吧！
+      </p>
+      <p v-else-if="state.step === 'tone'" class="step-prompt">选声调：</p>
+    </div>
 
     <!-- Step: Initial -->
     <div v-if="state.step === 'initial'" class="step-content">
-      <p class="step-prompt">选择一个声母开始吧！</p>
       <div class="initials-grid">
         <PinyinCard
           v-for="item in initialItems"
           :key="item.value"
           :element="item.element"
           variant="select"
+          compact
           :selected="state.selectedInitial === item.value"
           @select="handleInitialSelect(item)"
         />
@@ -151,13 +160,6 @@ const initialItems = computed(() =>
 
     <!-- Step: Final (medial chips integrated) -->
     <div v-else-if="state.step === 'final'" class="step-content">
-      <div class="step-toolbar">
-        <button class="back-btn" @click="handleBack">← 返回</button>
-        <p class="step-prompt">
-          选了声母 <strong>{{ state.selectedInitial }}</strong>，选一个韵母吧！
-        </p>
-      </div>
-
       <MedialChips
         v-if="showMedialChips"
         :medials="availableMedials"
@@ -180,10 +182,6 @@ const initialItems = computed(() =>
 
     <!-- Step: Tone -->
     <div v-else-if="state.step === 'tone'" class="step-content">
-      <div class="step-toolbar">
-        <button class="back-btn" @click="handleBack">← 返回</button>
-        <p class="step-prompt">选声调：</p>
-      </div>
       <TonePicker :selected-tone="state.selectedTone" :available-tones="availableTones" @select="handleToneSelect" />
     </div>
 
@@ -237,18 +235,18 @@ const initialItems = computed(() =>
   gap: var(--space-4);
 }
 
-.step-toolbar {
+.builder-toolbar {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-2);
-  width: 100%;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-1) 0;
+  flex-wrap: wrap;
 }
 
 .step-prompt {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
-  text-align: center;
+  white-space: nowrap;
 }
 
 .step-prompt strong {
@@ -258,12 +256,12 @@ const initialItems = computed(() =>
 
 .back-btn {
   padding: var(--space-1) var(--space-2);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
   border-radius: var(--radius-md);
   transition: all var(--transition-fast);
   font-family: inherit;
-  align-self: flex-start;
+  flex-shrink: 0;
 }
 
 .back-btn:hover {
@@ -415,22 +413,12 @@ const initialItems = computed(() =>
     gap: var(--space-2);
   }
 
-  .step-toolbar {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-3);
+  .builder-toolbar {
+    gap: var(--space-6);
   }
 
-  .step-toolbar .back-btn {
-    align-self: auto;
-    order: -1;
-  }
-
-  .step-toolbar .step-prompt {
-    flex: 1;
-    text-align: left;
-    font-size: var(--font-size-md);
+  .step-prompt {
+    font-size: var(--font-size-base);
   }
 
   .initials-grid {
