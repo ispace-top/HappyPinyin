@@ -6,8 +6,6 @@
 
 <div align="center">
 
-<img src="public/favicon.svg" width="96" alt="HappyPinYin" />
-
 # 🐼 快乐拼音 HappyPinYin
 
 *一个爸爸写给女儿的拼音学习乐园*
