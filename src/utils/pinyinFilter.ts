@@ -10,10 +10,20 @@ import { syllableCombinations } from '@/data/syllableCombinations'
 export function pinyinToSpeech(text: string): string {
   // Ordered longest-first: compound finals > initials > single vowels/consonants
   const replacements: [string, string][] = [
+    // Whole syllables (longest first — must come before letter decomposition)
+    ['zhuang', '庄'], ['chuang', '窗'], ['shuang', '双'],
+    ['zhuai', '拽'], ['chuai', '揣'], ['shuai', '摔'],
+    ['zhuan', '专'], ['chuan', '穿'], ['shuan', '栓'],
+    ['zhuo', '桌'], ['chuo', '戳'], ['shuo', '说'],
+    ['zhei', '这'], ['shei', '谁'],
+    ['yuan', '圆'], ['ying', '英'], ['yong', '拥'], ['yue', '月'], ['yun', '云'],
+    ['zhi', '知'], ['chi', '吃'], ['shi', '师'], ['ri', '日'],
+    ['zi', '资'], ['ci', '词'], ['si', '思'],
+    ['yi', '衣'], ['wu', '乌'], ['yu', '鱼'], ['ye', '耶'], ['yin', '音'],
     // Compound finals (ordered by length desc)
     ['uang', '汪'], ['iang', '央'], ['iong', '拥'],
     ['ang', '昂'], ['eng', '鞥'], ['ing', '英'], ['ong', '翁'],
-    ['uai', '歪'], ['uan', '弯'], ['uai', '歪'],
+    ['uai', '歪'], ['uan', '弯'],
     ['iao', '腰'], ['ian', '烟'], ['iou', '优'],
     ['ai', '挨'], ['ei', '欸'], ['ao', '凹'], ['ou', '欧'],
     ['iu', '优'], ['ie', '椰'],
