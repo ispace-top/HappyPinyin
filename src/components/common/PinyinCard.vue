@@ -74,7 +74,7 @@ function descriptionColor(category: string, subCategory?: string): string {
     <p class="pinyin-text">{{ element.text }}</p>
     <p v-if="element.description" class="pinyin-desc">{{ element.description }}</p>
     <AudioButton v-if="variant === 'select'" :text="element.pronunciation" />
-    <span v-else class="speaker-hint">🔈</span>
+    <AudioButton v-else :text="element.pronunciation" subtle />
   </div>
 </template>
 
@@ -145,8 +145,15 @@ function descriptionColor(category: string, subCategory?: string): string {
 }
 
 .speaker-hint {
-  font-size: var(--font-size-lg);
-  opacity: 0.3;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  background: rgba(255,255,255,0.6);
+  font-size: var(--font-size-base);
+  opacity: 0.5;
   margin-top: var(--space-1);
 }
 

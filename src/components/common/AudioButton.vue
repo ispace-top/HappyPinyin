@@ -4,6 +4,7 @@ import { useSpeech } from '@/composables/useSpeech'
 const props = defineProps<{
   text: string
   disabled?: boolean
+  subtle?: boolean
 }>()
 
 const { speak, isSpeaking, isSupported } = useSpeech()
@@ -18,7 +19,7 @@ function handleClick() {
 <template>
   <button
     class="audio-btn"
-    :class="{ speaking: isSpeaking, disabled: disabled || !isSupported }"
+    :class="{ speaking: isSpeaking, disabled: disabled || !isSupported, subtle }"
     :disabled="disabled || !isSupported"
     :title="isSupported ? '点击发音' : '您的浏览器不支持语音'"
     @click.stop="handleClick"
@@ -51,13 +52,37 @@ function handleClick() {
   animation: pulse 0.6s ease-in-out infinite;
 }
 
+.audio-btn.speaking .speaker-icon {
+  color: #fff;
+}
+
 .audio-btn.disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
 
+/* Subtle variant — transparent bg, smaller, for browse cards */
+.audio-btn.subtle {
+  min-width: 32px;
+  min-height: 32px;
+  background: rgba(255,255,255,0.55);
+}
+
+.audio-btn.subtle:hover:not(.disabled) {
+  background: rgba(255,255,255,0.8);
+  transform: scale(1.1);
+}
+
+.audio-btn.subtle.speaking {
+  background: var(--color-brand-orange);
+}
+
 .speaker-icon {
   font-size: var(--font-size-xl);
+}
+
+.audio-btn.subtle .speaker-icon {
+  font-size: var(--font-size-base);
 }
 
 .speaker-icon.muted {
