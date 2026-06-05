@@ -200,7 +200,6 @@ const initialItems = computed(() =>
         :resultData="{
           processText: selectionPreview,
           syllable: displayResult,
-          plainSyllable: resultSyllable ?? '',
           character: resultCharInfo[0],
           words: resultCharInfo[1],
           phrase: resultCharInfo[2],

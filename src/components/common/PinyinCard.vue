@@ -9,7 +9,6 @@ defineProps<{
   resultData?: {
     processText: string
     syllable: string
-    plainSyllable: string
     character: string
     words: string
     phrase: string
@@ -51,8 +50,6 @@ function descriptionColor(category: string, subCategory?: string): string {
     :style="{ '--card-gradient': cardGradient('final', 'compound') }"
   >
     <p class="result-process">{{ resultData.processText }}</p>
-    <p class="result-syllable-main">{{ resultData.syllable }}</p>
-    <p class="result-syllable-plain">({{ resultData.plainSyllable }})</p>
     <p class="result-char-display">{{ resultData.character }}</p>
     <p class="result-words-display">{{ resultData.words }} · {{ resultData.phrase }}</p>
     <slot name="result-actions" />
@@ -186,27 +183,13 @@ function descriptionColor(category: string, subCategory?: string): string {
   letter-spacing: 0.06em;
 }
 
-.result-syllable-main {
-  font-size: var(--font-size-pinyin-large);
-  font-weight: 800;
-  color: var(--color-brand-orange);
-  line-height: 1;
-}
-
-.result-syllable-plain {
-  font-size: var(--font-size-base);
-  font-weight: 400;
-  color: var(--color-text-secondary);
-  opacity: 0.7;
-}
-
 .result-char-display {
-  font-size: var(--font-size-3xl);
+  font-size: 4rem;
   font-weight: 800;
   color: var(--color-text-primary);
   background: rgba(255, 255, 255, 0.6);
   border-radius: var(--radius-md);
-  padding: var(--space-1) var(--space-4);
+  padding: var(--space-2) var(--space-6);
   min-width: 80px;
   text-align: center;
 }
@@ -225,8 +208,7 @@ function descriptionColor(category: string, subCategory?: string): string {
 }
 
 @media (min-width: 768px) {
-  .result-syllable-main { font-size: 6rem; }
-  .result-char-display { font-size: 4rem; }
+  .result-char-display { font-size: 5rem; }
   .result-words-display { font-size: var(--font-size-lg); }
 }
 </style>
