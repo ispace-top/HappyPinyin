@@ -13,7 +13,7 @@ const initialState: BuilderState = {
   medialChosen: false,
 }
 
-const stepOrder = ['initial', 'medial', 'final', 'tone', 'result'] as const
+const stepOrder = ['initial', 'final', 'tone', 'result'] as const
 
 export function useBuilder() {
   const state = reactive<BuilderState>({ ...initialState })
@@ -54,19 +54,25 @@ export function useBuilder() {
 
   const stepIndex = computed(() => stepOrder.indexOf(state.step))
 
+  // Whether to show medial chips (only when 2+ options exist)
+  const showMedialChips = computed(() => availableMedials.value.length > 1)
+
   function dispatch(action: BuilderAction) {
     switch (action.type) {
-      case 'SELECT_INITIAL':
-        state.step = 'medial'
+      case 'SELECT_INITIAL': {
+        state.step = 'final'
         state.selectedInitial = action.initial
-        state.selectedMedial = null
         state.selectedFinal = null
         state.selectedTone = null
-        state.medialChosen = false
+        state.medialChosen = true
+        // Auto-select first non-null medial if no null option exists (e.g., j/q/x)
+        const medials = getAvailableMedials(action.initial)
+        state.selectedMedial = medials.includes(null) ? null : (medials[0] ?? null)
         break
+      }
 
       case 'SELECT_MEDIAL':
-        state.step = 'final'
+        // Stay on 'final' step — medial is a filter, not a navigation step
         state.selectedMedial = action.medial
         state.selectedFinal = null
         state.selectedTone = null
@@ -95,17 +101,8 @@ export function useBuilder() {
           state.selectedFinal = null
           state.selectedTone = null
           state.medialChosen = false
-        } else if (prevStep === 'medial') {
-          state.selectedMedial = null
-          state.selectedFinal = null
-          state.selectedTone = null
-          state.medialChosen = false
-        } else if (prevStep === 'final') {
-          state.selectedFinal = null
-          state.selectedTone = null
-        } else if (prevStep === 'tone') {
-          state.selectedTone = null
         }
+        // Going back from tone→final or result→tone: preserve selections
         break
       }
 
@@ -122,6 +119,7 @@ export function useBuilder() {
     availableTones,
     resultSyllable,
     stepIndex,
+    showMedialChips,
     dispatch,
   }
 }

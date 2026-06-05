@@ -7,12 +7,11 @@ defineProps<{
 
 const steps: { key: BuilderStep; label: string; icon: string }[] = [
   { key: 'initial', label: '选声母', icon: '1' },
-  { key: 'medial',  label: '选介母', icon: '2' },
-  { key: 'final',   label: '选韵母', icon: '3' },
-  { key: 'tone',    label: '选声调', icon: '4' },
+  { key: 'final',   label: '选韵母', icon: '2' },
+  { key: 'tone',    label: '选声调', icon: '3' },
 ]
 
-const stepOrder: BuilderStep[] = ['initial', 'medial', 'final', 'tone', 'result']
+const stepOrder: BuilderStep[] = ['initial', 'final', 'tone', 'result']
 </script>
 
 <template>
@@ -118,5 +117,23 @@ const stepOrder: BuilderStep[] = ['initial', 'medial', 'final', 'tone', 'result'
 @keyframes pulse {
   0%, 100% { box-shadow: 0 0 0 0 var(--color-brand-orange-bg); }
   50% { box-shadow: 0 0 0 6px transparent; }
+}
+
+/* Compact on PC */
+@media (min-width: 1024px) {
+  .stepper {
+    padding: var(--space-2) 0;
+  }
+
+  .step-circle {
+    width: 28px;
+    height: 28px;
+    font-size: var(--font-size-xs);
+  }
+
+  .step-line {
+    width: 24px;
+    margin-bottom: 12px;
+  }
 }
 </style>

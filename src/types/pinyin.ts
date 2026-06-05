@@ -10,6 +10,7 @@ export interface PinyinElement {
   description?: string
   group?: string
   canBeMedial?: boolean
+  emoji?: string
 }
 
 export interface SyllableComponent {
@@ -20,7 +21,7 @@ export interface SyllableComponent {
   toneVariants: [string, string, string, string]
 }
 
-export type BuilderStep = 'initial' | 'medial' | 'final' | 'tone' | 'result'
+export type BuilderStep = 'initial' | 'final' | 'tone' | 'result'
 
 export interface BuilderState {
   step: BuilderStep

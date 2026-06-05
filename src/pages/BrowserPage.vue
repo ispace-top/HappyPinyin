@@ -48,7 +48,7 @@ if (tabParam && tabs.some(t => t.key === tabParam)) {
 
 <template>
   <div class="browser-page">
-    <h1 class="page-title">拼音浏览</h1>
+    <h1 class="page-title">读一读</h1>
     <p class="page-subtitle">点击卡片先听发音，再听助记口诀</p>
 
     <div class="tabs">

@@ -19,10 +19,10 @@ const route = useRoute()
       </RouterLink>
       <nav class="header-nav">
         <RouterLink to="/browser" class="nav-link" :class="{ active: route.name === 'browser' }">
-          拼音浏览
+          读一读
         </RouterLink>
         <RouterLink to="/builder" class="nav-link" :class="{ active: route.name === 'builder' }">
-          拼读构建
+          拼一拼
         </RouterLink>
       </nav>
     </div>

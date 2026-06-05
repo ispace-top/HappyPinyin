@@ -12,11 +12,11 @@ const route = useRoute()
     </RouterLink>
     <RouterLink to="/browser" class="nav-item" :class="{ active: route.name === 'browser' }">
       <span class="nav-icon">📖</span>
-      <span class="nav-label">浏览</span>
+      <span class="nav-label">读一读</span>
     </RouterLink>
     <RouterLink to="/builder" class="nav-item builder-cta" :class="{ active: route.name === 'builder' }">
       <span class="nav-icon">🧩</span>
-      <span class="nav-label">拼读</span>
+      <span class="nav-label">拼一拼</span>
     </RouterLink>
   </nav>
 </template>
