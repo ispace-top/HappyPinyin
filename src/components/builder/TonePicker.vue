@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { ToneOption } from '@/types/pinyin'
 
 const props = defineProps<{
   selectedTone?: number | null
@@ -11,24 +10,19 @@ defineEmits<{
   select: [tone: number]
 }>()
 
-const allTones: ToneOption[] = [
-  { value: 1, label: '一声', symbol: 'ˉ' },
-  { value: 2, label: '二声', symbol: 'ˊ' },
-  { value: 3, label: '三声', symbol: 'ˇ' },
-  { value: 4, label: '四声', symbol: 'ˋ' },
+interface ToneItem { value: number; symbol: string; label: string; color: string; gradient: string }
+
+const allTones: ToneItem[] = [
+  { value: 1, symbol: 'ˉ', label: '一声', color: '#EF4444', gradient: 'linear-gradient(135deg, #FEF2F2 0%, #FECACA 100%)' },
+  { value: 2, symbol: 'ˊ', label: '二声', color: '#F59E0B', gradient: 'linear-gradient(135deg, #FFFBEB 0%, #FDE68A 100%)' },
+  { value: 3, symbol: 'ˇ', label: '三声', color: '#22C55E', gradient: 'linear-gradient(135deg, #F0FDF4 0%, #BBF7D0 100%)' },
+  { value: 4, symbol: 'ˋ', label: '四声', color: '#3B82F6', gradient: 'linear-gradient(135deg, #EFF6FF 0%, #BFDBFE 100%)' },
 ]
 
 const tones = computed(() => {
   if (!props.availableTones || props.availableTones.length === 0) return allTones
   return allTones.filter(t => props.availableTones!.includes(t.value))
 })
-
-const toneColors: Record<number, string> = {
-  1: 'var(--color-tone-1)',
-  2: 'var(--color-tone-2)',
-  3: 'var(--color-tone-3)',
-  4: 'var(--color-tone-4)',
-}
 </script>
 
 <template>
@@ -36,9 +30,12 @@ const toneColors: Record<number, string> = {
     <button
       v-for="tone in tones"
       :key="tone.value"
-      class="tone-btn"
+      class="tone-card"
       :class="{ selected: selectedTone === tone.value }"
-      :style="{ '--tone-color': toneColors[tone.value] }"
+      :style="{
+        '--tone-gradient': tone.gradient,
+        '--tone-color': tone.color,
+      }"
       @click="$emit('select', tone.value)"
     >
       <span class="tone-symbol">{{ tone.symbol }}</span>
@@ -49,58 +46,92 @@ const toneColors: Record<number, string> = {
 
 <style scoped>
 .tone-picker {
-  display: flex;
-  gap: var(--space-3);
-  justify-content: center;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-2);
+  width: 100%;
 }
 
-.tone-btn {
+@media (min-width: 480px) {
+  .tone-picker {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.tone-card {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: var(--space-1);
-  width: 80px;
-  height: 80px;
-  border: 3px solid var(--color-border);
+  min-height: 100px;
+  padding: var(--space-2) var(--space-2);
+  background: var(--tone-gradient);
+  border: 3px solid transparent;
   border-radius: var(--radius-lg);
-  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
   cursor: pointer;
   transition: all var(--transition-normal);
   font-family: inherit;
+  position: relative;
+  overflow: hidden;
 }
 
-.tone-btn:hover {
-  border-color: var(--tone-color);
-  transform: translateY(-2px);
+.tone-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.5) 0%, transparent 60%);
+  pointer-events: none;
 }
 
-.tone-btn.selected {
+.tone-card:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: var(--shadow-elevated);
+}
+
+.tone-card.selected {
   border-color: var(--tone-color);
   background: var(--tone-color);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-elevated);
+}
+
+.tone-card.selected .tone-symbol,
+.tone-card.selected .tone-label {
   color: #fff;
 }
 
 .tone-symbol {
-  font-size: var(--font-size-2xl);
+  font-size: 2.5rem;
   font-weight: 700;
   line-height: 1;
+  color: var(--tone-color);
 }
 
 .tone-label {
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
   font-weight: 500;
+  color: var(--tone-color);
+}
+
+@media (min-width: 480px) {
+  .tone-picker {
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 500px;
+  }
 }
 
 @media (min-width: 768px) {
-  .tone-btn {
-    width: 100px;
-    height: 100px;
+  .tone-card {
+    min-height: 110px;
   }
-
   .tone-symbol {
-    font-size: var(--font-size-3xl);
+    font-size: 3rem;
+  }
+  .tone-label {
+    font-size: var(--font-size-base);
   }
 }
 </style>
