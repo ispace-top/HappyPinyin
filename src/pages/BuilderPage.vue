@@ -134,7 +134,7 @@ const initialItems = computed(() =>
   <div class="builder-page">
     <!-- Unified toolbar: back button + stepper + prompt -->
     <div class="builder-toolbar">
-      <button v-if="state.step !== 'initial'" class="back-btn" @click="handleBack">← 返回</button>
+      <button v-if="state.step !== 'initial'" class="back-btn" @click="handleBack">← 上一步</button>
       <BuilderStepper :current-step="state.step" />
       <p v-if="state.step === 'initial'" class="step-prompt">选择一个声母开始吧！</p>
       <p v-else-if="state.step === 'final'" class="step-prompt">
