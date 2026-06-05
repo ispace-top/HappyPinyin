@@ -2,12 +2,12 @@ import type { PinyinElement } from '@/types/pinyin'
 
 // pronunciation uses Chinese characters for correct TTS output
 export const singleFinals: PinyinElement[] = [
-  { id: 'final-a',  text: 'a',  category: 'final', subCategory: 'single', pronunciation: '阿', description: '张大嘴巴a', emoji: '😮' },
-  { id: 'final-o',  text: 'o',  category: 'final', subCategory: 'single', pronunciation: '喔', description: '公鸡打鸣o', emoji: '🐓' },
-  { id: 'final-e',  text: 'e',  category: 'final', subCategory: 'single', pronunciation: '鹅', description: '白鹅倒影e', emoji: '🦢' },
-  { id: 'final-i',  text: 'i',  category: 'final', subCategory: 'single', pronunciation: '衣', description: '一件衣服i', emoji: '👗' },
-  { id: 'final-u',  text: 'u',  category: 'final', subCategory: 'single', pronunciation: '乌', description: '一只乌鸦u', emoji: '🐦' },
-  { id: 'final-ü',  text: 'ü',  category: 'final', subCategory: 'single', pronunciation: '鱼', description: '一条小鱼ü', emoji: '🐟' },
+  { id: 'final-a',  text: 'a',  category: 'final', subCategory: 'single', pronunciation: '阿', description: '张大嘴巴a a a', emoji: '😮' },
+  { id: 'final-o',  text: 'o',  category: 'final', subCategory: 'single', pronunciation: '喔', description: '公鸡打鸣o o o', emoji: '🐓' },
+  { id: 'final-e',  text: 'e',  category: 'final', subCategory: 'single', pronunciation: '鹅', description: '白鹅倒影e e e', emoji: '🦢' },
+  { id: 'final-i',  text: 'i',  category: 'final', subCategory: 'single', pronunciation: '衣', description: '一件衣服i i i', emoji: '👗' },
+  { id: 'final-u',  text: 'u',  category: 'final', subCategory: 'single', pronunciation: '乌', description: '一只乌鸦u u u', emoji: '🐦' },
+  { id: 'final-ü',  text: 'ü',  category: 'final', subCategory: 'single', pronunciation: '鱼', description: '一条小鱼ü ü ü', emoji: '🐟' },
 ]
 
 export const compoundFinals: PinyinElement[] = [

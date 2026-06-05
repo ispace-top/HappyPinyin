@@ -33,7 +33,13 @@ const currentItems = computed<PinyinElement[]>(() => {
 function handleCardClick(element: PinyinElement) {
   const texts = [element.pronunciation]
   if (element.description) {
-    texts.push(descriptionToSpeech(element.description))
+    // Compound finals show short text but speak 3 repeats
+    let desc = element.description
+    if (element.subCategory === 'compound') {
+      const letter = element.text
+      desc = `${desc} ${letter} ${letter}`
+    }
+    texts.push(descriptionToSpeech(desc))
   }
   speakSequence(texts, { rate: 0.6 })
 }
