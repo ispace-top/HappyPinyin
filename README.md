@@ -77,9 +77,11 @@
 
 ## ✨ 功能特色
 
-<table>
-<tr>
-<td width="50%">
+| 模块 | 路由 | 说明 |
+|------|------|------|
+| 📖 **读一读** | `/browser` | 按类别浏览 63 个拼音元素（声母/韵母/整体认读音节），点一点听标准发音 |
+| 🧩 **拼一拼** | `/builder` | 交互式拼读构建器，像搭积木一样选声母→韵母→声调，拼出完整音节 |
+| 🫧 **玩一玩** | `/game` | 拼音泡泡乐 — 听音找拼音，点破七彩泡泡，收集贴纸解锁成就徽章 |
 
 ---
 
@@ -119,12 +121,18 @@ npm run preview    # 本地预览生产构建
 ```
 HappyPinYin/
 ├── docs/                          # 产品需求文档 + UI 设计文档
+│   ├── requirements.md            #   主应用 PRD
+│   ├── ui-design.md               #   主应用 UI 设计
+│   ├── game-requirements.md       #   游戏模块 PRD
+│   └── game-ui-design.md          #   游戏模块 UI 设计
 ├── public/
 │   └── favicon.svg                # 🐼 小熊猫图标
 ├── src/
 │   ├── main.ts / App.vue          # 入口 + 根布局
-│   ├── router/index.ts            # 3 个懒加载路由
-│   ├── types/pinyin.ts            # TypeScript 类型定义
+│   ├── router/index.ts            # 4 个懒加载路由
+│   ├── types/
+│   │   ├── pinyin.ts              #   拼音类型定义
+│   │   └── game.ts                #   游戏类型定义
 │   ├── data/                      # 拼音数据集（静态）
 │   │   ├── initials.ts            #   23 声母
 │   │   ├── finals.ts              #   6 单韵母 + 18 复韵母
@@ -133,11 +141,20 @@ HappyPinYin/
 │   ├── utils/
 │   │   ├── pinyinFilter.ts        #   智能筛选 + 拼音→汉字朗读转换
 │   │   ├── toneMark.ts            #   声调标注算法
-│   │   └── syllableChars.ts       #   音节→汉字+词组映射
+│   │   ├── syllableChars.ts       #   音节→汉字+词组映射
+│   │   ├── gameStorage.ts         #   游戏进度 localStorage 持久化
+│   │   └── sfxManager.ts          #   Web Audio API 程序化音效
 │   ├── services/speechService.ts  #   SpeechSynthesis 封装
-│   ├── composables/               #   useSpeech / useBuilder
-│   ├── components/                #   UI 组件
-│   └── pages/                     #   3 个页面
+│   ├── composables/
+│   │   ├── useSpeech.ts           #   语音朗读 composable
+│   │   ├── useBuilder.ts          #   拼读构建器状态机
+│   │   └── useGameEngine.ts       #   游戏核心状态机
+│   ├── components/
+│   │   ├── common/                #   通用组件 (PandaMascot, AudioButton...)
+│   │   ├── layout/                #   布局组件 (AppHeader, MobileNav)
+│   │   ├── builder/               #   拼读构建器组件
+│   │   └── game/                  #   游戏组件 (BubbleItem, GamePlay...)
+│   └── pages/                     #   4 个页面
 ├── Dockerfile                     # Docker 构建配置
 ├── nginx.conf                     # Nginx 配置
 └── README.md
