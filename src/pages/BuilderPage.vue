@@ -118,8 +118,22 @@ function handleReset() {
 
 function speakResult() {
   if (!resultSyllable.value) return
-  const text = getCharSpeech(resultSyllable.value)
-  speak(text, { rate: 0.5 })
+  const sequence: string[] = []
+
+  const initEl = initials.find(i => i.text === state.selectedInitial)
+  if (initEl) sequence.push(initEl.pronunciation)
+
+  if (state.selectedMedial) sequence.push(pinyinToSpeech(medialDisplay(state.selectedMedial)))
+  if (state.selectedFinal) sequence.push(pinyinToSpeech(finalDisplay(state.selectedFinal, state.selectedMedial)))
+
+  const charInfo = getSyllableInfo(resultSyllable.value)
+  if (charInfo) {
+    sequence.push(getCharSpeech(resultSyllable.value))
+    sequence.push(charInfo[1])
+    sequence.push(charInfo[2])
+  }
+
+  speakSequence(sequence, { rate: 0.5 })
 }
 
 const initialItems = computed(() =>
@@ -206,7 +220,7 @@ const initialItems = computed(() =>
         }"
       >
         <template #result-actions>
-          <AudioButton :text="resultCharInfo?.[0] ?? displayResult" @click="speakResult" />
+          <AudioButton text="" @click="speakResult" />
         </template>
       </PinyinCard>
 
