@@ -5,7 +5,15 @@ import AudioButton from './AudioButton.vue'
 defineProps<{
   element: PinyinElement
   selected?: boolean
-  variant?: 'browse' | 'select'
+  variant?: 'browse' | 'select' | 'result'
+  resultData?: {
+    processText: string
+    syllable: string
+    plainSyllable: string
+    character: string
+    words: string
+    phrase: string
+  }
 }>()
 
 defineEmits<{
@@ -36,7 +44,22 @@ function descriptionColor(category: string, subCategory?: string): string {
 </script>
 
 <template>
+  <!-- Result variant -->
   <div
+    v-if="variant === 'result' && resultData"
+    class="pinyin-card result-card"
+    :style="{ '--card-gradient': cardGradient('final', 'compound') }"
+  >
+    <p class="result-process">{{ resultData.processText }}</p>
+    <p class="result-syllable-main">{{ resultData.syllable }}</p>
+    <p class="result-syllable-plain">({{ resultData.plainSyllable }})</p>
+    <p class="result-char-display">{{ resultData.character }}</p>
+    <p class="result-words-display">{{ resultData.words }} · {{ resultData.phrase }}</p>
+  </div>
+
+  <!-- Browse/Select variants -->
+  <div
+    v-else
     class="pinyin-card"
     :class="{ selected, selectable: variant === 'select' }"
     :style="{
@@ -149,5 +172,73 @@ function descriptionColor(category: string, subCategory?: string): string {
   .pinyin-text {
     font-size: 2.25rem;
   }
+}
+
+/* === Result Card Styles === */
+.result-card {
+  min-height: auto;
+  padding: var(--space-6) var(--space-5);
+  border: 3px solid var(--color-brand-orange-light);
+  box-shadow: var(--shadow-elevated);
+  cursor: default;
+  gap: var(--space-3);
+  animation: resultAppear 0.5s var(--ease-bounce);
+  max-width: 400px;
+  width: 100%;
+}
+
+.result-card:hover {
+  transform: none;
+}
+
+.result-process {
+  font-size: var(--font-size-base);
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.06em;
+}
+
+.result-syllable-main {
+  font-size: var(--font-size-pinyin-large);
+  font-weight: 800;
+  color: var(--color-brand-orange);
+  line-height: 1;
+}
+
+.result-syllable-plain {
+  font-size: var(--font-size-base);
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  opacity: 0.7;
+}
+
+.result-char-display {
+  font-size: var(--font-size-3xl);
+  font-weight: 800;
+  color: var(--color-text-primary);
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-md);
+  padding: var(--space-1) var(--space-4);
+  min-width: 80px;
+  text-align: center;
+}
+
+.result-words-display {
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  color: #5A9E75;
+  text-align: center;
+}
+
+@keyframes resultAppear {
+  0%   { transform: scale(0.8); opacity: 0; }
+  60%  { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@media (min-width: 768px) {
+  .result-syllable-main { font-size: 6rem; }
+  .result-char-display { font-size: 4rem; }
+  .result-words-display { font-size: var(--font-size-lg); }
 }
 </style>

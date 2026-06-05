@@ -2,6 +2,7 @@
 import { computed, watch } from 'vue'
 import { useBuilder } from '@/composables/useBuilder'
 import { useSpeech } from '@/composables/useSpeech'
+import { useAudioMode } from '@/composables/useAudioMode'
 import { initials } from '@/data/initials'
 import { medialDisplay, finalDisplay, pinyinToSpeech } from '@/utils/pinyinFilter'
 import { formatResultSyllable } from '@/utils/toneMark'
@@ -19,6 +20,7 @@ import AudioButton from '@/components/common/AudioButton.vue'
 const { state, availableMedials, availableFinals, availableTones, resultSyllable,
         showMedialChips, dispatch } = useBuilder()
 const { speak, speakSequence } = useSpeech()
+const { shouldAutoSpeak } = useAudioMode()
 
 const showCelebration = computed(() => state.step === 'result' && resultSyllable.value !== null)
 
@@ -49,28 +51,33 @@ const resultCharInfo = computed(() => {
 
 function handleInitialSelect(item: typeof initialItems.value[number]) {
   dispatch({ type: 'SELECT_INITIAL', initial: item.value })
+  if (!shouldAutoSpeak()) return
   const initEl = initials.find(i => i.text === item.value)
   if (initEl) speak(initEl.pronunciation, { rate: 0.5 })
 }
 
 function handleMedialSelect(medial: string | null) {
   dispatch({ type: 'SELECT_MEDIAL', medial })
-  if (medial) speak(pinyinToSpeech(medialDisplay(medial)), { rate: 0.5 })
+  if (!shouldAutoSpeak() || !medial) return
+  speak(pinyinToSpeech(medialDisplay(medial)), { rate: 0.5 })
 }
 
 function handleFinalSelect(item: SelectorItem) {
   dispatch({ type: 'SELECT_FINAL', final: item.value })
+  if (!shouldAutoSpeak()) return
   speak(pinyinToSpeech(finalDisplay(item.value, state.selectedMedial)), { rate: 0.5 })
 }
 
 function handleToneSelect(tone: number) {
   dispatch({ type: 'SELECT_TONE', tone })
+  if (!shouldAutoSpeak()) return
   const toneNames: Record<number, string> = { 1: '一声', 2: '二声', 3: '三声', 4: '四声' }
   speak(toneNames[tone] ?? '', { rate: 0.5 })
 }
 
 watch(() => state.step, (newStep) => {
   if (newStep !== 'result' || !resultSyllable.value) return
+  if (!shouldAutoSpeak()) return
   const sequence: string[] = []
 
   const initEl = initials.find(i => i.text === state.selectedInitial)
@@ -169,31 +176,25 @@ const initialItems = computed(() =>
     <!-- Step: Result -->
     <div v-else-if="state.step === 'result'" class="step-content result-step">
       <CelebrationEffect v-if="showCelebration" />
-      <div class="result-layout">
-        <div class="result-display">
-          <p class="result-process">{{ selectionPreview }}</p>
-          <div class="result-syllable-wrapper">
-            <Transition name="pop">
-              <p v-if="displayResult" class="result-syllable">{{ displayResult }}</p>
-            </Transition>
-          </div>
 
-          <Transition name="pop">
-            <div v-if="resultCharInfo" class="result-char-info">
-              <p class="result-char">{{ resultCharInfo[0] }}</p>
-              <p class="result-words">{{ resultCharInfo[1] }} · {{ resultCharInfo[2] }}</p>
-            </div>
-          </Transition>
+      <PinyinCard
+        v-if="resultCharInfo"
+        variant="result"
+        :element="{} as any"
+        :resultData="{
+          processText: selectionPreview,
+          syllable: displayResult,
+          plainSyllable: resultSyllable ?? '',
+          character: resultCharInfo[0],
+          words: resultCharInfo[1],
+          phrase: resultCharInfo[2],
+        }"
+      />
 
-          <div class="result-actions">
-            <AudioButton :text="resultCharInfo?.[0] ?? displayResult" @click="speakResult" />
-          </div>
-        </div>
-
-        <div class="result-sidebar">
-          <PandaMascot mood="happy" />
-          <button class="reset-btn" @click="handleReset">再拼一个</button>
-        </div>
+      <div class="result-actions-bar">
+        <AudioButton :text="resultCharInfo?.[0] ?? displayResult" @click="speakResult" />
+        <button class="reset-btn" @click="handleReset">再拼一个</button>
+        <PandaMascot mood="happy" size="small" showBubble bubbleText="太棒了!" />
       </div>
     </div>
 

@@ -18,6 +18,11 @@ const router = createRouter({
       name: 'builder',
       component: () => import('@/pages/BuilderPage.vue'),
     },
+    {
+      path: '/about',
+      name: 'about',
+      component: () => import('@/pages/AboutPage.vue'),
+    },
   ],
 })
 

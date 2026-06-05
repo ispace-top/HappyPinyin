@@ -1,12 +1,25 @@
 <script setup lang="ts">
-defineProps<{
+import { computed } from 'vue'
+
+const props = defineProps<{
   mood?: 'idle' | 'happy' | 'thinking'
+  size?: 'small' | 'medium' | 'large'
+  showBubble?: boolean
+  bubbleText?: string
 }>()
+
+const svgSize = computed(() => {
+  switch (props.size) {
+    case 'large': return 200
+    case 'medium': return 120
+    default: return 80
+  }
+})
 </script>
 
 <template>
-  <div class="panda-mascot" :class="mood ?? 'idle'">
-    <svg width="80" height="80" viewBox="0 0 80 80">
+  <div class="panda-mascot" :class="[mood ?? 'idle', size ?? 'small']">
+    <svg :width="svgSize" :height="svgSize" viewBox="0 0 80 80">
       <!-- Ears -->
       <circle cx="22" cy="18" r="10" fill="#2C3E50"/>
       <circle cx="58" cy="18" r="10" fill="#2C3E50"/>
@@ -26,7 +39,8 @@ defineProps<{
       <circle cx="22" cy="42" r="6" fill="#FFB380" opacity="0.5"/>
       <circle cx="58" cy="42" r="6" fill="#FFB380" opacity="0.5"/>
     </svg>
-    <p v-if="mood === 'happy'" class="bubble">太棒了!</p>
+    <p v-if="showBubble && bubbleText" class="bubble">{{ bubbleText }}</p>
+    <p v-else-if="mood === 'happy'" class="bubble">太棒了!</p>
     <p v-else-if="mood === 'thinking'" class="bubble">来拼一拼吧!</p>
   </div>
 </template>

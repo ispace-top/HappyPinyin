@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import MobileNav from '@/components/layout/MobileNav.vue'
+import AppFooter from '@/components/layout/AppFooter.vue'
 
 const route = useRoute()
 const showMobileNav = computed(() => route.name !== 'builder')
@@ -19,6 +20,7 @@ const showMobileNav = computed(() => route.name !== 'builder')
       </RouterView>
     </main>
     <MobileNav v-if="showMobileNav" />
+    <AppFooter />
   </div>
 </template>
 

@@ -5,10 +5,14 @@ import PandaMascot from '@/components/common/PandaMascot.vue'
 <template>
   <div class="home-page">
     <section class="hero">
-      <PandaMascot mood="thinking" />
-      <h1 class="hero-title">快乐拼音</h1>
-      <p class="hero-subtitle">和拼拼一起学拼音！</p>
-      <p class="hero-dedication">💕 为瑶瑶定制的六一礼物</p>
+      <div class="hero-left">
+        <PandaMascot mood="thinking" size="large" showBubble bubbleText="你好呀！我是拼拼～" />
+      </div>
+      <div class="hero-right">
+        <h1 class="hero-title">快乐拼音</h1>
+        <p class="hero-subtitle">声母 · 韵母 · 整体认读音节</p>
+        <p class="hero-dedication">💕 为瑶瑶定制的六一礼物</p>
+      </div>
     </section>
 
     <section class="feature-cards">
@@ -60,23 +64,37 @@ import PandaMascot from '@/components/common/PandaMascot.vue'
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-4);
+  padding: var(--space-10) 0 var(--space-6);
+}
+
+.hero-left {
+  display: flex;
+  justify-content: center;
+}
+
+.hero-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 .hero-title {
   font-size: var(--font-size-3xl);
   font-weight: 800;
   color: var(--color-brand-orange);
+  letter-spacing: 0.08em;
 }
 
 .hero-subtitle {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-md);
   color: var(--color-text-secondary);
 }
 
 .hero-dedication {
   font-size: var(--font-size-sm);
-  color: var(--color-tone-1);
+  color: #E8839A;
   font-weight: 500;
   margin-top: var(--space-1);
 }
@@ -198,6 +216,20 @@ import PandaMascot from '@/components/common/PandaMascot.vue'
 
   .hero-title {
     font-size: 3.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-12);
+    padding: var(--space-12) var(--space-8);
+  }
+
+  .hero-right {
+    align-items: flex-start;
   }
 }
 </style>
