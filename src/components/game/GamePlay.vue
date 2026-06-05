@@ -5,6 +5,9 @@ import { ROUNDS_PER_GAME } from '@/types/game'
 import type { useGameEngine } from '@/composables/useGameEngine'
 import BubbleItem from './BubbleItem.vue'
 import ProgressBar from './ProgressBar.vue'
+import { speechService } from '@/services/speechService'
+
+const speechSupported = speechService.isSupported()
 
 const props = defineProps<{
   engine: ReturnType<typeof useGameEngine>
@@ -96,6 +99,11 @@ watch(() => state.currentRound, () => {
 
 <template>
   <div class="gameplay">
+    <!-- TTS not supported warning -->
+    <div v-if="!speechSupported" class="tts-warning">
+      ⚠️ 你的浏览器不支持语音功能，请在爸爸妈妈的帮助下使用 Chrome 或 Edge 浏览器打开
+    </div>
+
     <!-- Panda HUD -->
     <div class="hud">
       <div class="panda-area">
@@ -162,6 +170,17 @@ watch(() => state.currentRound, () => {
   gap: 20px;
   padding: 24px 16px;
   min-height: 100%;
+}
+
+.tts-warning {
+  background: #FFF3CD;
+  color: #856404;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  text-align: center;
+  max-width: 400px;
+  line-height: 1.5;
 }
 
 .hud {
