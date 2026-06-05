@@ -80,7 +80,7 @@
   /* === Layout === */
   --header-height: 56px;
   --mobile-nav-height: 64px;
-  --max-content-width: 960px;
+  --max-content-width: 1120px;
   --touch-target-min: 48px;
 
   /* === Responsive container === */
@@ -98,7 +98,7 @@
 @media (min-width: 1024px) {
   :root {
     --container-padding: var(--space-8);
-    --container-max-width: 960px;
+    --container-max-width: 1120px;
     --header-height: 64px;
   }
 }

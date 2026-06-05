@@ -185,39 +185,22 @@ function descriptionColor(category: string, subCategory?: string): string {
 
 /* === Compact variant === */
 .pinyin-card.compact {
-  min-height: 100px;
+  min-height: 110px;
   padding: var(--space-2) var(--space-2);
   gap: var(--space-1);
   border-radius: var(--radius-lg);
 }
 
-.pinyin-card.compact .card-emoji {
-  font-size: 1.75rem;
-}
-
-.pinyin-card.compact .pinyin-text {
-  font-size: 1.75rem;
-}
-
-.pinyin-card.compact .pinyin-desc {
-  font-size: var(--font-size-xs);
-}
-
-.pinyin-card.compact .speaker-hint {
-  font-size: var(--font-size-base);
-  opacity: 0.25;
-}
+.pinyin-card.compact .card-emoji { font-size: 1.75rem; }
+.pinyin-card.compact .pinyin-text { font-size: 1.75rem; }
+.pinyin-card.compact .pinyin-desc { font-size: var(--font-size-xs); }
 
 @media (min-width: 768px) {
   .pinyin-card.compact {
-    min-height: 110px;
+    min-height: 120px;
   }
-  .pinyin-card.compact .card-emoji {
-    font-size: 2rem;
-  }
-  .pinyin-card.compact .pinyin-text {
-    font-size: 2rem;
-  }
+  .pinyin-card.compact .card-emoji { font-size: 2rem; }
+  .pinyin-card.compact .pinyin-text { font-size: 2rem; }
 }
 
 /* === Result Card Styles === */

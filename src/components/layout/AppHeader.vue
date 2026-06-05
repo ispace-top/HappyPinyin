@@ -91,7 +91,7 @@ const { isAutoMode, toggle } = useAudioMode()
 .header-right {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-4);
 }
 
 .header-nav {

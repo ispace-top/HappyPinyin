@@ -224,9 +224,9 @@ import PandaMascot from '@/components/common/PandaMascot.vue'
     flex-direction: row;
     justify-content: center;
     align-items: flex-start;
-    gap: var(--space-8);
-    padding-top: var(--space-12);
-    max-width: 900px;
+    gap: var(--space-12);
+    padding-top: var(--space-16);
+    max-width: 1000px;
     margin: 0 auto;
   }
 
