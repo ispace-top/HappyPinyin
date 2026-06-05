@@ -236,11 +236,10 @@ const initialItems = computed(() =>
 }
 
 .builder-toolbar {
-  display: flex;
+  display: grid;
+  grid-template-columns: 60px 1fr auto;
   align-items: center;
-  gap: var(--space-3);
   padding: var(--space-1) 0;
-  flex-wrap: wrap;
 }
 
 .step-prompt {
