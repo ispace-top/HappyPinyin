@@ -54,10 +54,8 @@ import PandaMascot from '@/components/common/PandaMascot.vue'
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: var(--space-6);
-  min-height: calc(100dvh - var(--header-height) - var(--mobile-nav-height));
-  padding: var(--space-4) 0;
+  padding: var(--space-6) 0;
 }
 
 .hero {
