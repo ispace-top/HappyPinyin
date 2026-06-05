@@ -291,16 +291,10 @@ const initialItems = computed(() =>
   color: var(--color-text-primary);
 }
 
-.initials-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-2);
-  width: 100%;
-}
-
+.initials-grid,
 .finals-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
   gap: var(--space-2);
   width: 100%;
 }
@@ -418,13 +412,13 @@ const initialItems = computed(() =>
 
 /* PC Layout Optimization */
 @media (min-width: 480px) {
-  .initials-grid { grid-template-columns: repeat(3, 1fr); }
-  .finals-grid { grid-template-columns: repeat(3, 1fr); }
+  .initials-grid,
+  .finals-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
 }
 
 @media (min-width: 768px) {
-  .initials-grid { grid-template-columns: repeat(4, 1fr); }
-  .finals-grid { grid-template-columns: repeat(4, 1fr); }
+  .initials-grid,
+  .finals-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
   .result-syllable { font-size: 6rem; }
   .result-char { font-size: 4rem; }
 }
@@ -443,12 +437,8 @@ const initialItems = computed(() =>
     font-size: var(--font-size-base);
   }
 
-  .initials-grid {
-    grid-template-columns: repeat(8, 1fr);
-  }
-  .finals-grid {
-    grid-template-columns: repeat(6, 1fr);
-  }
+  .initials-grid,
+  .finals-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
 
   .result-layout {
     flex-direction: row;

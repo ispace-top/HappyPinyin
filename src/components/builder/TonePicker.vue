@@ -47,15 +47,21 @@ const tones = computed(() => {
 <style scoped>
 .tone-picker {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
   gap: var(--space-2);
   width: 100%;
 }
 
 @media (min-width: 480px) {
-  .tone-picker {
-    grid-template-columns: repeat(4, 1fr);
-  }
+  .tone-picker { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+}
+
+@media (min-width: 768px) {
+  .tone-picker { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+}
+
+@media (min-width: 1024px) {
+  .tone-picker { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
 }
 
 .tone-card {
