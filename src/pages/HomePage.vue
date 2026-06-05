@@ -6,7 +6,7 @@ import PandaMascot from '@/components/common/PandaMascot.vue'
   <div class="home-page">
     <section class="hero">
       <div class="hero-left">
-        <PandaMascot mood="thinking" size="medium" showBubble bubbleText="你好呀！我是拼拼～" />
+        <PandaMascot mood="thinking" size="medium" showBubble bubbleText="你好呀！" />
       </div>
       <div class="hero-right">
         <h1 class="hero-title">快乐拼音</h1>
@@ -56,16 +56,18 @@ import PandaMascot from '@/components/common/PandaMascot.vue'
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-8);
-  padding-top: var(--space-8);
+  justify-content: center;
+  gap: var(--space-6);
+  min-height: calc(100dvh - var(--header-height) - var(--mobile-nav-height));
+  padding: var(--space-4) 0;
 }
 
 .hero {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-4);
-  padding: var(--space-10) 0 var(--space-6);
+  gap: var(--space-3);
+  padding: 0;
 }
 
 .hero-left {
@@ -81,19 +83,19 @@ import PandaMascot from '@/components/common/PandaMascot.vue'
 }
 
 .hero-title {
-  font-size: var(--font-size-3xl);
+  font-size: var(--font-size-2xl);
   font-weight: 800;
   color: var(--color-brand-orange);
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
 }
 
 .hero-subtitle {
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
 }
 
 .hero-dedication {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   color: #E8839A;
   font-weight: 500;
   margin-top: var(--space-1);
@@ -223,39 +225,27 @@ import PandaMascot from '@/components/common/PandaMascot.vue'
   .home-page {
     flex-direction: row;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
     gap: var(--space-12);
-    padding-top: var(--space-16);
+    min-height: calc(100dvh - var(--header-height));
     max-width: 1000px;
     margin: 0 auto;
+    padding: 0;
   }
 
   .hero {
-    flex-direction: column;
     gap: var(--space-4);
-    padding: 0;
     flex-shrink: 0;
   }
 
-  .hero-title {
-    font-size: var(--font-size-2xl);
-  }
-
-  .hero-subtitle {
-    font-size: var(--font-size-sm);
-  }
-
-  .hero-right {
-    align-items: center;
-  }
+  .hero-title { font-size: var(--font-size-2xl); }
+  .hero-subtitle { font-size: var(--font-size-sm); }
 
   .feature-cards {
     flex: 1;
     max-width: 420px;
   }
 
-  .tips {
-    display: none;
-  }
+  .tips { display: none; }
 }
 </style>
