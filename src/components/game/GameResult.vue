@@ -2,7 +2,7 @@
 import { computed, ref, onMounted } from 'vue'
 import type { GameState } from '@/types/game'
 import type { StickerGrade } from '@/types/game'
-import { STICKER_DEFS, ROUNDS_PER_GAME, STAR_3_THRESHOLD, STAR_2_THRESHOLD, STAR_1_THRESHOLD } from '@/types/game'
+import { STICKER_DEFS, ROUNDS_PER_GAME } from '@/types/game'
 import { updateLevelProgress, getLevelProgress, checkAndUnlockAchievements } from '@/utils/gameStorage'
 import StarRating from './StarRating.vue'
 
