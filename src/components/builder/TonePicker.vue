@@ -1,28 +1,33 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { ToneOption } from '@/types/pinyin'
 
-defineProps<{
+const props = defineProps<{
   selectedTone?: number | null
+  availableTones?: number[]
 }>()
 
 defineEmits<{
   select: [tone: number]
 }>()
 
-const tones: ToneOption[] = [
+const allTones: ToneOption[] = [
   { value: 1, label: '一声', symbol: 'ˉ' },
   { value: 2, label: '二声', symbol: 'ˊ' },
   { value: 3, label: '三声', symbol: 'ˇ' },
   { value: 4, label: '四声', symbol: 'ˋ' },
-  { value: 0, label: '轻声', symbol: '·' },
 ]
+
+const tones = computed(() => {
+  if (!props.availableTones || props.availableTones.length === 0) return allTones
+  return allTones.filter(t => props.availableTones!.includes(t.value))
+})
 
 const toneColors: Record<number, string> = {
   1: 'var(--color-tone-1)',
   2: 'var(--color-tone-2)',
   3: 'var(--color-tone-3)',
   4: 'var(--color-tone-4)',
-  0: 'var(--color-tone-neutral)',
 }
 </script>
 

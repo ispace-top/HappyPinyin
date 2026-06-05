@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, watch } from 'vue'
 import { useBuilder } from '@/composables/useBuilder'
 import { useSpeech } from '@/composables/useSpeech'
@@ -15,7 +15,7 @@ import PandaMascot from '@/components/common/PandaMascot.vue'
 import CelebrationEffect from '@/components/common/CelebrationEffect.vue'
 import AudioButton from '@/components/common/AudioButton.vue'
 
-const { state, availableMedials, availableFinals, resultSyllable, dispatch } = useBuilder()
+const { state, availableMedials, availableFinals, availableTones, resultSyllable, dispatch } = useBuilder()
 const { speak, speakSequence } = useSpeech()
 
 const showCelebration = computed(() => state.step === 'result' && resultSyllable.value !== null)
@@ -77,7 +77,7 @@ function handleFinalSelect(item: SelectorItem) {
 function handleToneSelect(tone: number) {
   dispatch({ type: 'SELECT_TONE', tone })
   // Tone name pronunciation
-  const toneNames: Record<number, string> = { 1: '一声', 2: '二声', 3: '三声', 4: '四声', 0: '轻声' }
+  const toneNames: Record<number, string> = { 1: '一声', 2: '二声', 3: '三声', 4: '四声' }
   speak(toneNames[tone] ?? '', { rate: 0.5 })
 }
 
@@ -93,7 +93,7 @@ watch(() => state.step, (newStep) => {
 
   if (state.selectedFinal) sequence.push(pinyinToSpeech(finalDisplay(state.selectedFinal, state.selectedMedial)))
 
-  const toneNames: Record<number, string> = { 1: '一声', 2: '二声', 3: '三声', 4: '四声', 0: '轻声' }
+  const toneNames: Record<number, string> = { 1: '一声', 2: '二声', 3: '三声', 4: '四声' }
   if (state.selectedTone !== null) sequence.push(toneNames[state.selectedTone] ?? '')
 
   // Final result character + word group
@@ -180,7 +180,7 @@ const initialItems = computed(() =>
     <div v-else-if="state.step === 'tone'" class="step-content">
       <button class="back-btn" @click="handleBack">← 返回</button>
       <p class="step-prompt">选声调：</p>
-      <TonePicker :selected-tone="state.selectedTone" @select="handleToneSelect" />
+      <TonePicker :selected-tone="state.selectedTone" :available-tones="availableTones" @select="handleToneSelect" />
     </div>
 
     <!-- Step: Result -->

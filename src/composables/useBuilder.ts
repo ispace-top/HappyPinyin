@@ -1,6 +1,8 @@
 import { reactive, computed } from 'vue'
 import type { BuilderState, BuilderAction } from '@/types/pinyin'
 import { getAvailableMedials, getAvailableFinals, getResultSyllable } from '@/utils/pinyinFilter'
+import { syllableCombinations } from '@/data/syllableCombinations'
+import { getSyllableInfo } from '@/utils/syllableChars'
 
 const initialState: BuilderState = {
   step: 'initial',
@@ -36,6 +38,18 @@ export function useBuilder() {
       state.selectedFinal,
       state.selectedTone
     )
+  })
+
+  const availableTones = computed(() => {
+    if (!state.selectedInitial || !state.medialChosen || !state.selectedFinal) return []
+    const match = syllableCombinations.find(
+      s => s.initial === state.selectedInitial && s.medial === state.selectedMedial && s.final === state.selectedFinal
+    )
+    if (!match) return []
+    return [1, 2, 3, 4].filter(tone => {
+      const toneMarked = match.toneVariants[tone - 1]
+      return toneMarked ? getSyllableInfo(toneMarked) !== null : false
+    })
   })
 
   const stepIndex = computed(() => stepOrder.indexOf(state.step))
@@ -105,6 +119,7 @@ export function useBuilder() {
     state,
     availableMedials,
     availableFinals,
+    availableTones,
     resultSyllable,
     stepIndex,
     dispatch,

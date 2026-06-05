@@ -30,7 +30,7 @@ export function pinyinToSpeech(text: string): string {
     ['r', '日'], ['z', '资'], ['c', '词'], ['s', '思'],
     ['y', '衣'], ['w', '屋'],
     ['ü', '鱼'],
-    ['a', '啊'], ['o', '哦'], ['e', '鹅'],
+    ['a', '啊'], ['o', '喔'], ['e', '鹅'],
     ['i', '衣'], ['u', '乌'],
   ]
   let result = text
