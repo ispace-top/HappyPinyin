@@ -5,10 +5,8 @@ import PandaMascot from '@/components/common/PandaMascot.vue'
 <template>
   <div class="home-page">
     <section class="hero">
-      <div class="hero-left">
-        <PandaMascot mood="thinking" size="medium" showBubble bubbleText="你好呀！" />
-      </div>
-      <div class="hero-right">
+      <PandaMascot mood="thinking" size="medium" showBubble bubbleText="你好呀！" />
+      <div class="hero-text">
         <h1 class="hero-title">快乐拼音</h1>
         <p class="hero-subtitle">声母 · 韵母 · 整体认读音节</p>
         <p class="hero-dedication">💕 为瑶瑶定制的六一礼物</p>
@@ -64,22 +62,15 @@ import PandaMascot from '@/components/common/PandaMascot.vue'
 
 .hero {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-4);
   padding: 0;
 }
 
-.hero-left {
-  display: flex;
-  justify-content: center;
-}
-
-.hero-right {
+.hero-text {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-1);
 }
 
 .hero-title {
@@ -234,9 +225,13 @@ import PandaMascot from '@/components/common/PandaMascot.vue'
   }
 
   .hero {
+    flex-direction: column;
+    align-items: center;
     gap: var(--space-4);
     flex-shrink: 0;
   }
+
+  .hero-text { align-items: center; }
 
   .hero-title { font-size: var(--font-size-2xl); }
   .hero-subtitle { font-size: var(--font-size-sm); }
