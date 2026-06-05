@@ -438,7 +438,7 @@ const initialItems = computed(() =>
   }
 
   .initials-grid,
-  .finals-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+  .finals-grid { grid-template-columns: repeat(8, 1fr); }
 
   .result-layout {
     flex-direction: row;

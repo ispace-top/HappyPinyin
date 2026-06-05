@@ -159,8 +159,8 @@ if (tabParam && tabs.some(t => t.key === tabParam)) {
 
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: var(--space-2);
 }
 
 .card-list-enter-active {
@@ -173,14 +173,14 @@ if (tabParam && tabs.some(t => t.key === tabParam)) {
 }
 
 @media (min-width: 480px) {
-  .cards-grid { grid-template-columns: repeat(3, 1fr); }
+  .cards-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
 }
 
 @media (min-width: 768px) {
-  .cards-grid { grid-template-columns: repeat(4, 1fr); gap: var(--space-4); }
+  .cards-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
 }
 
 @media (min-width: 1024px) {
-  .cards-grid { grid-template-columns: repeat(6, 1fr); }
+  .cards-grid { grid-template-columns: repeat(8, 1fr); }
 }
 </style>
