@@ -34,8 +34,8 @@ function handleClick() {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: var(--touch-target-min);
-  min-height: var(--touch-target-min);
+  min-width: 36px;
+  min-height: 36px;
   border-radius: var(--radius-full);
   background: rgba(255, 255, 255, 0.65);
   backdrop-filter: blur(4px);
@@ -65,8 +65,8 @@ function handleClick() {
 
 /* Subtle — smaller, for browse cards */
 .audio-btn.subtle {
-  min-width: 32px;
-  min-height: 32px;
+  min-width: 28px;
+  min-height: 28px;
   background: rgba(255, 255, 255, 0.5);
 }
 
@@ -88,14 +88,14 @@ function handleClick() {
 }
 
 .speaker-icon {
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-base);
   transition: transform var(--transition-fast);
   position: relative;
   z-index: 1;
 }
 
 .audio-btn.subtle .speaker-icon {
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-sm);
 }
 
 .audio-btn.speaking .speaker-icon {
