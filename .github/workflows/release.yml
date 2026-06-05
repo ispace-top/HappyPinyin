@@ -26,20 +26,6 @@ jobs:
         uses: actions/checkout@v4
 
       # ============================================================
-      # 检查 Docker Hub 凭证
-      # ============================================================
-      - name: Check Docker Hub secrets
-        id: check-secrets
-        run: |
-          if [ -n "${{ secrets.DOCKERHUB_USERNAME }}" ] && [ -n "${{ secrets.DOCKERHUB_TOKEN }}" ]; then
-            echo "available=true" >> $GITHUB_OUTPUT
-          else
-            echo "available=false" >> $GITHUB_OUTPUT
-            echo "::error::DOCKERHUB_USERNAME / DOCKERHUB_TOKEN secrets are required for release"
-            exit 1
-          fi
-
-      # ============================================================
       # 确定版本号：Release → 从 tag 提取；手动 → 使用输入值
       # ============================================================
       - name: Resolve version
