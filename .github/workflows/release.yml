@@ -11,7 +11,7 @@ on:
         default: ''
 
 env:
-  DOCKERHUB_REPO: ispace-top/happy-pinyin
+  DOCKERHUB_REPO: wapedkj/happy-pinyin
 
 permissions:
   contents: write
