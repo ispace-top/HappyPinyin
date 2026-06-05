@@ -15,7 +15,7 @@
 [![Vue](https://img.shields.io/badge/Vue-3.5-4FC08D?logo=vue.js&logoColor=white)](https://vuejs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Vite](https://img.shields.io/badge/Vite-6.2-646CFF?logo=vite&logoColor=white)](https://vitejs.dev)
-[![Docker](https://img.shields.io/github/actions/workflow/status/ispace-top/HappyPinyin/release.yml?label=docker%20build&logo=docker&logoColor=white)](https://github.com/ispace-top/HappyPinyin/actions)
+[![Docker](https://img.shields.io/github/actions/workflow/status/ispace-top/HappyPinyin/release.yml?label=docker%20build&logo=docker&logoColor=white)](https://github.com/wapedkj/HappyPinyin/actions)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 </div>
