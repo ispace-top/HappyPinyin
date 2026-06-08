@@ -96,7 +96,7 @@ function handleClick() {
   user-select: none;
 }
 
-/* idle: gentle float */
+/* idle: gentle float + micro-scale */
 .state-idle {
   animation: float 2.5s ease-in-out infinite;
   animation-delay: var(--float-delay, 0s);
@@ -119,9 +119,9 @@ function handleClick() {
   transition: transform 0.08s ease-out;
 }
 
-/* correct-pop: explode then disappear */
+/* correct-pop: explode with particle burst */
 .state-correct-pop {
-  animation: pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   pointer-events: none;
 }
 
@@ -144,14 +144,15 @@ function handleClick() {
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-8px) scale(1.03); }
 }
 
 @keyframes pop {
-  0% { transform: scale(1); opacity: 1; }
-  40% { transform: scale(1.3); opacity: 1; }
-  100% { transform: scale(0); opacity: 0; }
+  0% { transform: scale(1); opacity: 1; box-shadow: 0 4px 15px rgba(0,0,0,0.08), inset 0 -3px 6px rgba(0,0,0,0.06), inset 0 3px 6px rgba(255,255,255,0.3); }
+  30% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 30px rgba(255,255,255,0.6), 0 0 60px currentColor; }
+  60% { transform: scale(1.1); opacity: 0.8; box-shadow: 0 0 20px rgba(255,255,255,0.3); }
+  100% { transform: scale(0); opacity: 0; box-shadow: 0 0 0 rgba(255,255,255,0); }
 }
 
 @keyframes bounce {

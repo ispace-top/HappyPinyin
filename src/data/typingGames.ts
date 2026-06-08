@@ -1,0 +1,67 @@
+import type { GameConfig } from '@/types/kingdom'
+import { initials } from '@/data/initials'
+import { singleFinals, compoundFinals } from '@/data/finals'
+import { wholeSyllables } from '@/data/wholeSyllables'
+
+export const TYPING_GAMES: GameConfig[] = [
+  {
+    id: 'typing-1',
+    zoneId: 'typing',
+    mechanic: 'typing',
+    name: '拼音初学',
+    emoji: '⌨️',
+    level: 1,
+    roundsPerGame: 10,
+    optionCount: 4,
+    pool: initials.filter(i => ['b', 'p', 'm', 'f', 'd', 't', 'n', 'l'].includes(i.text)),
+    avoidConfusionGroups: false,
+  },
+  {
+    id: 'typing-2',
+    zoneId: 'typing',
+    mechanic: 'typing',
+    name: '声母进阶',
+    emoji: '⌨️',
+    level: 2,
+    roundsPerGame: 10,
+    optionCount: 5,
+    pool: initials.filter(i => ['g', 'k', 'h', 'j', 'q', 'x'].includes(i.text)),
+    avoidConfusionGroups: false,
+  },
+  {
+    id: 'typing-3',
+    zoneId: 'typing',
+    mechanic: 'typing',
+    name: '韵母挑战',
+    emoji: '⌨️',
+    level: 3,
+    roundsPerGame: 10,
+    optionCount: 6,
+    pool: singleFinals,
+    avoidConfusionGroups: false,
+  },
+  {
+    id: 'typing-4',
+    zoneId: 'typing',
+    mechanic: 'typing',
+    name: '复韵母挑战',
+    emoji: '⌨️',
+    level: 4,
+    roundsPerGame: 10,
+    optionCount: 6,
+    pool: compoundFinals,
+    avoidConfusionGroups: false,
+  },
+  {
+    id: 'typing-5',
+    zoneId: 'typing',
+    mechanic: 'typing',
+    name: '整体认读',
+    emoji: '⌨️',
+    level: 5,
+    roundsPerGame: 10,
+    optionCount: 6,
+    pool: wholeSyllables,
+    avoidConfusionGroups: false,
+  },
+]
