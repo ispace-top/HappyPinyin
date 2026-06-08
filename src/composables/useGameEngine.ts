@@ -6,6 +6,7 @@ import { initials } from '@/data/initials'
 import { singleFinals, compoundFinals } from '@/data/finals'
 import { wholeSyllables } from '@/data/wholeSyllables'
 import { speechService } from '@/services/speechService'
+import { play as playPinyinAudio, stop as stopPinyinAudio, getAudioPath } from '@/services/pinyinAudio'
 
 const LEVEL_CONFIGS: LevelConfig[] = [
   { level: 1, name: '单韵母乐园', emoji: '🌱', optionCount: 4, pool: singleFinals, avoidConfusionGroups: true },
@@ -123,7 +124,17 @@ export function useGameEngine() {
     const round = currentRoundData.value
     if (!round) return
     speechService.stop()
-    speechService.speak(round.target.pronunciation, { rate: 0.7, pitch: 1.1 })
+    stopPinyinAudio()
+    const audioPath = getAudioPath(round.target.category, round.target.text)
+    if (audioPath) {
+      playPinyinAudio(audioPath).then((success: boolean) => {
+        if (!success) {
+          speechService.speak(round!.target.pronunciation, { rate: 0.7, pitch: 1.1 })
+        }
+      })
+    } else {
+      speechService.speak(round.target.pronunciation, { rate: 0.7, pitch: 1.1 })
+    }
   }
 
   function selectBubble(elementId: string): 'correct' | 'wrong' {
@@ -176,6 +187,7 @@ export function useGameEngine() {
 
   function resetGame(): void {
     speechService.stop()
+    stopPinyinAudio()
     Object.assign(state, createInitialState())
   }
 

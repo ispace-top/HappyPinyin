@@ -6,6 +6,7 @@ import { useAudioMode } from '@/composables/useAudioMode'
 import { initials } from '@/data/initials'
 import { allFinals } from '@/data/finals'
 import { medialDisplay, finalDisplay, pinyinToSpeech } from '@/utils/pinyinFilter'
+import { getAudioPath } from '@/services/pinyinAudio'
 import { formatResultSyllable } from '@/utils/toneMark'
 import { getSyllableInfo, getCharSpeech } from '@/utils/syllableChars'
 import type { PinyinElement } from '@/types/pinyin'
@@ -18,7 +19,7 @@ import AudioButton from '@/components/common/AudioButton.vue'
 
 const { state, availableMedials, availableFinals, availableTones, resultSyllable,
         showMedialChips, dispatch } = useBuilder()
-const { speak, speakSequence } = useSpeech()
+const { speak, playAudio, playAudioSequence } = useSpeech()
 const { shouldAutoSpeak } = useAudioMode()
 
 const showCelebration = computed(() => state.step === 'result' && resultSyllable.value !== null)
@@ -29,7 +30,8 @@ const finalElements = computed<PinyinElement[]>(() =>
     const match = allFinals.find(el => el.text === f || (f === 'üe' && el.text === 'üe') || (f === 'ün' && el.text === 'ün'))
     return {
       id: `builder-final-${f}`,
-      text: finalDisplay(f, state.selectedMedial),
+      text: f, // 保持原始值，用于音频路径查找
+      displayText: finalDisplay(f, state.selectedMedial), // 用于显示
       category: 'final' as const,
       subCategory: match?.subCategory,
       pronunciation: match?.pronunciation ?? finalDisplay(f, state.selectedMedial),
@@ -65,20 +67,36 @@ const resultCharInfo = computed(() => {
 function handleInitialSelect(item: typeof initialItems.value[number]) {
   dispatch({ type: 'SELECT_INITIAL', initial: item.value })
   if (!shouldAutoSpeak()) return
-  const initEl = initials.find(i => i.text === item.value)
-  if (initEl) speak(initEl.pronunciation, { rate: 0.5 })
+  const audioPath = getAudioPath('initial', item.value)
+  if (audioPath) {
+    playAudio(audioPath)
+  } else {
+    const initEl = initials.find(i => i.text === item.value)
+    if (initEl) speak(initEl.pronunciation, { rate: 0.5 })
+  }
 }
 
 function handleMedialSelect(medial: string | null) {
   dispatch({ type: 'SELECT_MEDIAL', medial })
   if (!shouldAutoSpeak() || !medial) return
-  speak(pinyinToSpeech(medialDisplay(medial)), { rate: 0.5 })
+  const displayText = medialDisplay(medial)
+  const audioPath = getAudioPath('final', displayText)
+  if (audioPath) {
+    playAudio(audioPath)
+  } else {
+    speak(pinyinToSpeech(displayText), { rate: 0.5 })
+  }
 }
 
 function handleFinalSelect(element: PinyinElement) {
   dispatch({ type: 'SELECT_FINAL', final: element.text })
   if (!shouldAutoSpeak()) return
-  speak(pinyinToSpeech(finalDisplay(element.text, state.selectedMedial)), { rate: 0.5 })
+  const audioPath = getAudioPath('final', element.text)
+  if (audioPath) {
+    playAudio(audioPath)
+  } else {
+    speak(pinyinToSpeech(finalDisplay(element.text, state.selectedMedial)), { rate: 0.5 })
+  }
 }
 
 function handleToneSelect(tone: number) {
@@ -91,26 +109,7 @@ function handleToneSelect(tone: number) {
 watch(() => state.step, (newStep) => {
   if (newStep !== 'result' || !resultSyllable.value) return
   if (!shouldAutoSpeak()) return
-  const sequence: string[] = []
-
-  const initEl = initials.find(i => i.text === state.selectedInitial)
-  if (initEl) sequence.push(initEl.pronunciation)
-
-  if (state.selectedMedial) sequence.push(pinyinToSpeech(medialDisplay(state.selectedMedial)))
-
-  if (state.selectedFinal) sequence.push(pinyinToSpeech(finalDisplay(state.selectedFinal, state.selectedMedial)))
-
-  const toneNames: Record<number, string> = { 1: '一声', 2: '二声', 3: '三声', 4: '四声' }
-  if (state.selectedTone !== null) sequence.push(toneNames[state.selectedTone] ?? '')
-
-  const charInfo = getSyllableInfo(resultSyllable.value)
-  if (charInfo) {
-    sequence.push(getCharSpeech(resultSyllable.value))
-    sequence.push(charInfo[1])
-    sequence.push(charInfo[2])
-  }
-
-  speakSequence(sequence, { rate: 0.5 })
+  playResultSequence()
 })
 
 function handleBack() {
@@ -121,24 +120,47 @@ function handleReset() {
   dispatch({ type: 'RESET' })
 }
 
-function speakResult() {
+function playResultSequence() {
   if (!resultSyllable.value) return
-  const sequence: string[] = []
 
-  const initEl = initials.find(i => i.text === state.selectedInitial)
-  if (initEl) sequence.push(initEl.pronunciation)
+  // 收集本地音频路径
+  const audioPaths: string[] = []
 
-  if (state.selectedMedial) sequence.push(pinyinToSpeech(medialDisplay(state.selectedMedial)))
-  if (state.selectedFinal) sequence.push(pinyinToSpeech(finalDisplay(state.selectedFinal, state.selectedMedial)))
+  if (state.selectedInitial) {
+    const initPath = getAudioPath('initial', state.selectedInitial)
+    if (initPath) audioPaths.push(initPath)
+  }
+
+  if (state.selectedMedial) {
+    const displayText = medialDisplay(state.selectedMedial)
+    const medialPath = getAudioPath('final', displayText)
+    if (medialPath) audioPaths.push(medialPath)
+  }
+
+  if (state.selectedFinal) {
+    const finalPath = getAudioPath('final', state.selectedFinal)
+    if (finalPath) audioPaths.push(finalPath)
+  }
+
+  // 收集TTS文本
+  const ttsTexts: string[] = []
+
+  const toneNames: Record<number, string> = { 1: '一声', 2: '二声', 3: '三声', 4: '四声' }
+  if (state.selectedTone !== null) ttsTexts.push(toneNames[state.selectedTone] ?? '')
 
   const charInfo = getSyllableInfo(resultSyllable.value)
   if (charInfo) {
-    sequence.push(getCharSpeech(resultSyllable.value))
-    sequence.push(charInfo[1])
-    sequence.push(charInfo[2])
+    ttsTexts.push(getCharSpeech(resultSyllable.value))
+    ttsTexts.push(charInfo[1])
+    ttsTexts.push(charInfo[2])
   }
 
-  speakSequence(sequence, { rate: 0.5 })
+  playAudioSequence(audioPaths, ttsTexts, { rate: 0.5 })
+}
+
+function speakResult() {
+  if (!resultSyllable.value) return
+  playResultSequence()
 }
 
 const initialItems = computed(() =>

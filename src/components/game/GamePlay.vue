@@ -6,6 +6,7 @@ import type { useGameEngine } from '@/composables/useGameEngine'
 import BubbleItem from './BubbleItem.vue'
 import ProgressBar from './ProgressBar.vue'
 import { speechService } from '@/services/speechService'
+import { sfxManager } from '@/utils/sfxManager'
 
 const speechSupported = speechService.isSupported()
 
@@ -53,6 +54,7 @@ function handleSelect(elementId: string) {
   if (result === 'correct') {
     bubbleStates.value[elementId] = 'correct-pop'
     feedbackActive.value = true
+    sfxManager.play('pop-correct')
     setTimeout(() => {
       feedbackActive.value = false
       roundTransitioning.value = true
@@ -74,6 +76,7 @@ function handleSelect(elementId: string) {
     }, 600)
   } else {
     bubbleStates.value[elementId] = 'wrong-bounce'
+    sfxManager.play('pop-wrong')
     setTimeout(() => {
       if (bubbleStates.value[elementId] === 'wrong-bounce') {
         bubbleStates.value[elementId] = 'idle'
@@ -107,8 +110,8 @@ watch(() => state.currentRound, () => {
       <div class="panda-area">
         <span class="panda-emoji">🐼</span>
         <div class="panda-bubble">
-          <span v-if="currentRoundData" class="bubble-label">
-            找一找 —— {{ currentRoundData.target.text }}
+          <span class="bubble-label">
+            找一找
           </span>
           <button class="replay-btn" @click="handleReplay" aria-label="再听一次发音">
             🔈
