@@ -35,8 +35,10 @@ export interface GameConfig {
   optionCount: number     // for recognition: 4|5|6
   pool: PinyinElement[]
   avoidConfusionGroups: boolean
-  // Spelling-specific
-  syllablePool?: string[] // for workshop/typing games
+  // Spelling/typing-specific
+  syllablePool?: string[]     // fixed syllable list (spelling), omit for dynamic generation
+  finalPool?: PinyinElement[] // finals available for dynamic generation (typing)
+  toneRequired?: boolean      // typing: whether tone selection is required
 }
 
 // ========== Unified Game State ==========

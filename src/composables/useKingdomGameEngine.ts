@@ -8,19 +8,18 @@ import { shuffle, pickRandom, pickDistractors, calculateScore, calculateComboBon
 import { initials } from '@/data/initials'
 import { singleFinals, compoundFinals } from '@/data/finals'
 import { syllableCombinations } from '@/data/syllableCombinations'
-import { getCharForSyllable } from '@/utils/syllableChars'
+import { getBestSpeech } from '@/utils/syllableChars'
 
 interface RoundData {
   target: PinyinElement
   options: PinyinElement[]
   answeredCorrectly: boolean
   clicksThisRound: number
-  // Spelling
+  // Spelling/typing
   targetSyllable?: string
+  targetTone?: number        // 0-3 for tone-required mode
   initialOptions?: PinyinElement[]
   finalOptions?: PinyinElement[]
-  // Typing
-  targetChar?: string
 }
 
 function createInitialState(): KingdomGameState {
@@ -72,24 +71,42 @@ function generateRecognitionRounds(config: GameConfig): RoundData[] {
   return rounds
 }
 
-function generateSpellingRounds(config: GameConfig): RoundData[] {
-  const syllables = config.syllablePool || []
+function generateSyllableRounds(config: GameConfig): RoundData[] {
   const rounds: RoundData[] = []
   const used = new Set<string>()
-  const allFinals = [...singleFinals, ...compoundFinals]
+  const allFinals = config.finalPool || [...singleFinals, ...compoundFinals]
+
+  const hasFixedPool = config.syllablePool && config.syllablePool.length > 0
 
   while (rounds.length < config.roundsPerGame) {
-    const available = syllables.filter(s => !used.has(s))
-    if (available.length === 0) break
+    let syllable: string
+    let decomp: SyllableComponent | undefined
 
-    const syllable = pickRandom(available, 1)[0]!
-    used.add(syllable)
+    if (hasFixedPool) {
+      const available = config.syllablePool!.filter(s => !used.has(s))
+      if (available.length === 0) break
+      syllable = pickRandom(available, 1)[0]!
+      used.add(syllable)
+      decomp = findSyllableDecomp(syllable)
+      if (!decomp) continue
+    } else {
+      // Dynamic generation: randomly combine initial + final
+      let attempts = 0
+      do {
+        const randInit = pickRandom(config.pool, 1)[0]!
+        const randFinal = pickRandom(allFinals, 1)[0]!
+        syllable = randInit.text + randFinal.text
+        attempts++
+        if (attempts > 50) break
+      } while (used.has(syllable) || !findSyllableDecomp(syllable))
+      if (attempts > 50 && used.has(syllable)) break
+      used.add(syllable)
+      decomp = findSyllableDecomp(syllable)
+      if (!decomp) continue
+    }
 
-    const decomp = findSyllableDecomp(syllable)
-    if (!decomp) continue
-
-    const targetInitial = initials.find(ini => ini.text === decomp.initial)
-    const targetFinal = allFinals.find(f => f.text === decomp.final)
+    const targetInitial = initials.find(ini => ini.text === decomp!.initial)
+    const targetFinal = allFinals.find(f => f.text === decomp!.final)
     if (!targetInitial || !targetFinal) continue
 
     // Initial options from pool + ensure target is included
@@ -101,11 +118,12 @@ function generateSpellingRounds(config: GameConfig): RoundData[] {
     const finalOpts = shuffle([targetFinal, ...pickRandom(finalDistractors, Math.min(config.optionCount - 1, finalDistractors.length))])
 
     rounds.push({
-      target: targetInitial, // placeholder, not really used
-      options: [], // spelling uses initialOptions + finalOptions
+      target: targetInitial,
+      options: [],
       answeredCorrectly: false,
       clicksThisRound: 0,
       targetSyllable: syllable,
+      targetTone: config.toneRequired ? Math.floor(Math.random() * 4) : undefined,
       initialOptions: initialOpts,
       finalOptions: finalOpts,
     })
@@ -113,27 +131,8 @@ function generateSpellingRounds(config: GameConfig): RoundData[] {
   return rounds
 }
 
-function generateTypingRounds(config: GameConfig): RoundData[] {
-  const rounds: RoundData[] = []
-  const used = new Set<string>()
-
-  for (let i = 0; i < config.roundsPerGame; i++) {
-    const available = config.pool.filter(p => !used.has(p.id))
-    if (available.length === 0) break
-
-    const target = pickRandom(available, 1)[0]!
-    used.add(target.id)
-
-    rounds.push({
-      target,
-      options: [],
-      answeredCorrectly: false,
-      clicksThisRound: 0,
-      targetChar: target.pronunciation, // Chinese character pronunciation
-    })
-  }
-  return rounds
-}
+// generateTypingRounds uses the same syllable-based logic as spelling
+const generateTypingRounds = generateSyllableRounds
 
 export function useKingdomGameEngine(gameConfig: Ref<GameConfig | null>) {
   const state = reactive<KingdomGameState>(createInitialState())
@@ -157,7 +156,7 @@ export function useKingdomGameEngine(gameConfig: Ref<GameConfig | null>) {
         rounds = generateRecognitionRounds(config)
         break
       case 'spelling':
-        rounds = generateSpellingRounds(config)
+        rounds = generateSyllableRounds(config)
         break
       case 'typing':
         rounds = generateTypingRounds(config)
@@ -189,13 +188,12 @@ export function useKingdomGameEngine(gameConfig: Ref<GameConfig | null>) {
     speechService.stop()
     stopAudio()
 
-    if (config.mechanic === 'spelling' && round.targetSyllable) {
+    if ((config.mechanic === 'spelling' || config.mechanic === 'typing') && round.targetSyllable) {
     // Play the Chinese character pronunciation (TTS), not the spelling
     // The child hears the character and must figure out the initial+final
     const syllable = round.targetSyllable
     const decomp = findSyllableDecomp(syllable)
-    const toneMarked = decomp?.toneVariants[0] ?? syllable
-    const charText = getCharForSyllable(toneMarked) || syllable
+    const charText = decomp ? getBestSpeech(decomp.toneVariants, syllable) : syllable
     speechService.speak(charText, { rate: 0.7, pitch: 1.1 })
   } else {
       // For recognition/bubble/typing, play local audio or TTS
@@ -227,7 +225,7 @@ export function useKingdomGameEngine(gameConfig: Ref<GameConfig | null>) {
     return 'wrong'
   }
 
-  function checkSpelling(initialId: string, finalId: string): 'correct' | 'wrong' {
+  function checkSpelling(initialId: string, finalId: string, tone?: number): 'correct' | 'wrong' {
     const round = currentRoundData.value
     if (!round || state.phase !== 'playing' || !round.targetSyllable) return 'wrong'
 
@@ -241,6 +239,11 @@ export function useKingdomGameEngine(gameConfig: Ref<GameConfig | null>) {
     const correctFinal = round.finalOptions?.find(f => f.id === finalId)
 
     if (correctInitial?.text === decomp.initial && correctFinal?.text === decomp.final) {
+      // If tone is required, check it too
+      if (round.targetTone !== undefined && tone !== round.targetTone) {
+        state.combo = 0
+        return 'wrong'
+      }
       return applyCorrectAnswer()
     }
 
@@ -248,20 +251,8 @@ export function useKingdomGameEngine(gameConfig: Ref<GameConfig | null>) {
     return 'wrong'
   }
 
-  function checkTyping(typedText: string): 'correct' | 'wrong' {
-    const round = currentRoundData.value
-    if (!round || state.phase !== 'playing') return 'wrong'
-
-    round.clicksThisRound++
-    state.totalClicks++
-
-    const normalized = typedText.trim().toLowerCase()
-    if (normalized === round.target.text.toLowerCase()) {
-      return applyCorrectAnswer()
-    }
-
-    state.combo = 0
-    return 'wrong'
+  function checkTyping(initialId: string, finalId: string, tone?: number): 'correct' | 'wrong' {
+    return checkSpelling(initialId, finalId, tone)
   }
 
   function applyCorrectAnswer(): 'correct' {

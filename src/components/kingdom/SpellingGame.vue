@@ -5,7 +5,7 @@ import type { useKingdomGameEngine } from '@/composables/useKingdomGameEngine'
 import ProgressBar from '@/components/game/ProgressBar.vue'
 import { speechService } from '@/services/speechService'
 import { sfxManager } from '@/utils/sfxManager'
-import { getCharForSyllable } from '@/utils/syllableChars'
+import { getBestChar, getBestEntry } from '@/utils/syllableChars'
 import { syllableCombinations } from '@/data/syllableCombinations'
 import { play as playAudio, getAudioPath } from '@/services/pinyinAudio'
 
@@ -38,8 +38,16 @@ const targetChar = computed(() => {
   const round = currentRoundData.value
   if (!round?.targetSyllable) return ''
   const decomp = syllableCombinations.find(s => s.syllable === round.targetSyllable)
-  const toneMarked = decomp?.toneVariants[0] ?? ''
-  return toneMarked ? getCharForSyllable(toneMarked) || round.targetSyllable : round.targetSyllable
+  return decomp ? getBestChar(decomp.toneVariants, round.targetSyllable) : round.targetSyllable
+})
+
+const targetWords = computed(() => {
+  const round = currentRoundData.value
+  if (!round?.targetSyllable) return { w1: '', w2: '' }
+  const decomp = syllableCombinations.find(s => s.syllable === round.targetSyllable)
+  if (!decomp) return { w1: '', w2: '' }
+  const entry = getBestEntry(decomp.toneVariants)
+  return entry ? { w1: entry.word1, w2: entry.word2 } : { w1: '', w2: '' }
 })
 
 function handleSelectInitial(id: string) {
@@ -76,8 +84,7 @@ function playSpellingResult(initId: string, finalId: string): Promise<boolean> {
     // Build the combined syllable and find its Chinese character for TTS
     const combined = initElem.text + finalElem.text
     const decomp = syllableCombinations.find(s => s.syllable === combined)
-    const toneMarked = decomp?.toneVariants[0]
-    const charText = toneMarked ? (getCharForSyllable(toneMarked) || combined) : combined
+    const charText = decomp ? getBestChar(decomp.toneVariants, combined) : combined
 
     const playChain = initPath && finalPath
       ? playAudio(initPath).then((ok) => ok ? playAudio(finalPath) : Promise.resolve(false))
@@ -187,6 +194,7 @@ watch(() => state.currentRound, () => {
       <div class="char-card-inner">
         <span class="char-big">{{ targetChar }}</span>
         <span class="char-pinyin">{{ currentRoundData.targetSyllable }}</span>
+        <span v-if="targetWords.w1" class="char-words">{{ targetWords.w1 }} · {{ targetWords.w2 }}</span>
       </div>
       <button class="listen-btn" @click="handleReplay" aria-label="再听一次发音">
         <span class="listen-icon">🔊</span>
@@ -344,6 +352,11 @@ watch(() => state.currentRound, () => {
   color: var(--color-text-secondary, #888);
   margin-top: 4px;
   letter-spacing: 1px;
+}
+
+.char-words {
+  font-size: 0.85rem; color: var(--color-text-secondary,#999);
+  margin-top: 2px;
 }
 
 .listen-btn {
