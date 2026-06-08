@@ -399,6 +399,11 @@ const T: Record<string, [string, string, string, string]> = {
   yang: ['yāng','yáng','yǎng','yàng'],
   ying: ['yīng','yíng','yǐng','yìng'],
   yong: ['yōng','yóng','yǒng','yòng'],
+  yi:   ['yī',  'yí',  'yǐ',  'yì'],
+  yu:   ['yū',  'yú',  'yǔ',  'yù'],
+  yue:  ['yuē', 'yué', 'yuě', 'yuè'],
+  yuan: ['yuān','yuán','yuǎn','yuàn'],
+  yun:  ['yūn', 'yún', 'yǔn', 'yùn'],
   // w
   wa:   ['wā',  'wá',  'wǎ',  'wà'],
   wo:   ['wō',  'wó',  'wǒ',  'wò'],
@@ -408,6 +413,7 @@ const T: Record<string, [string, string, string, string]> = {
   wen:  ['wēn', 'wén', 'wěn', 'wèn'],
   wang: ['wāng','wáng','wǎng','wàng'],
   weng: ['wēng','wéng','wěng','wèng'],
+  wu:   ['wū',  'wú',  'wǔ',  'wù'],
 }
 
 function buildSyllable(key: string, initial: string, medial: string | null, final: string): SyllableComponent {
@@ -662,10 +668,14 @@ export const syllableCombinations: SyllableComponent[] = [
   buildSyllable('you',  'y', null, 'ou'),  buildSyllable('yan',  'y', null, 'an'),
   buildSyllable('yin',  'y', null, 'in'),  buildSyllable('yang', 'y', null, 'ang'),
   buildSyllable('ying', 'y', null, 'ing'), buildSyllable('yong', 'y', null, 'ong'),
+  buildSyllable('yi',   'y', null, 'i'),   buildSyllable('yu',   'y', null, 'ü'),
+  buildSyllable('yue',  'y', null, 'üe'),  buildSyllable('yuan', 'y', 'v', 'an'),
+  buildSyllable('yun',  'y', null, 'ün'),
 
   // === w 组合 ===
   buildSyllable('wa',   'w', null, 'a'),   buildSyllable('wo',   'w', null, 'o'),
   buildSyllable('wai',  'w', null, 'ai'),  buildSyllable('wei',  'w', null, 'ei'),
   buildSyllable('wan',  'w', null, 'an'),  buildSyllable('wen',  'w', null, 'en'),
   buildSyllable('wang', 'w', null, 'ang'), buildSyllable('weng', 'w', null, 'eng'),
+  buildSyllable('wu',   'w', null, 'u'),
 ]

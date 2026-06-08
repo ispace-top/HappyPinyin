@@ -5,6 +5,7 @@ import { singleFinals, compoundFinals } from '@/data/finals'
 import { wholeSyllables } from '@/data/wholeSyllables'
 import { useSpeech } from '@/composables/useSpeech'
 import { descriptionToSpeech } from '@/utils/pinyinFilter'
+import { getAudioPath } from '@/services/pinyinAudio'
 import type { PinyinElement, PinyinCategory } from '@/types/pinyin'
 import PinyinCard from '@/components/common/PinyinCard.vue'
 
@@ -18,7 +19,7 @@ const tabs: { key: Tab; label: string; count: number }[] = [
 ]
 
 const activeTab = ref<Tab>('initial')
-const { speakSequence } = useSpeech()
+const { speakSequence, playAudioThenSpeak } = useSpeech()
 
 const currentItems = computed<PinyinElement[]>(() => {
   switch (activeTab.value) {
@@ -31,16 +32,22 @@ const currentItems = computed<PinyinElement[]>(() => {
 })
 
 function handleCardClick(element: PinyinElement) {
-  const texts = [element.pronunciation]
+  const ttsTexts: string[] = []
   if (element.description) {
     let desc = element.description
     if (element.subCategory === 'compound') {
       const letter = element.text
       desc = `${desc} ${letter} ${letter}`
     }
-    texts.push(descriptionToSpeech(desc))
+    ttsTexts.push(descriptionToSpeech(desc))
   }
-  speakSequence(texts, { rate: 0.6 })
+
+  const audioPath = getAudioPath(element.category, element.text)
+  if (audioPath) {
+    playAudioThenSpeak(audioPath, ttsTexts, { rate: 0.6 })
+  } else {
+    speakSequence([element.pronunciation, ...ttsTexts], { rate: 0.6 })
+  }
 }
 
 // Load tab from URL query param

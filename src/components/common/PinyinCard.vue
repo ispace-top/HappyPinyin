@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { PinyinElement } from '@/types/pinyin'
 import AudioButton from './AudioButton.vue'
 
-defineProps<{
-  element: PinyinElement
+const props = defineProps<{
+  element: PinyinElement & { displayText?: string }
   selected?: boolean
   variant?: 'browse' | 'select' | 'result'
   resultData?: {
@@ -18,6 +19,9 @@ defineProps<{
 defineEmits<{
   select: []
 }>()
+
+// 优先使用 displayText 属性（用于显示），否则使用 text（用于音频路径查找）
+const displayText = computed(() => props.element.displayText ?? props.element.text)
 
 function pinyinFontSize(text: string): string {
   const len = text.length
@@ -76,7 +80,7 @@ function descriptionColor(category: string, subCategory?: string): string {
     @click="$emit('select')"
   >
     <span v-if="element.emoji" class="card-emoji" aria-hidden="true">{{ element.emoji }}</span>
-    <p class="pinyin-text" :style="{ fontSize: pinyinFontSize(element.text) }">{{ element.text }}</p>
+    <p class="pinyin-text" :style="{ fontSize: pinyinFontSize(displayText) }">{{ displayText }}</p>
     <p v-if="element.description" class="pinyin-desc">{{ element.description }}</p>
     <AudioButton v-if="variant === 'select'" :text="element.pronunciation" />
     <AudioButton v-else :text="element.pronunciation" subtle />
