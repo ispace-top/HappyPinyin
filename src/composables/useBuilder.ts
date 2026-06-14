@@ -101,8 +101,12 @@ export function useBuilder() {
           state.selectedFinal = null
           state.selectedTone = null
           state.medialChosen = false
+        } else if (prevStep === 'final') {
+          state.selectedFinal = null
+          state.selectedTone = null
+        } else if (prevStep === 'tone') {
+          state.selectedTone = null
         }
-        // Going back from tone→final or result→tone: preserve selections
         break
       }
 

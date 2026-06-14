@@ -255,6 +255,29 @@ export function useKingdomGameEngine(gameConfig: Ref<GameConfig | null>) {
     return checkSpelling(initialId, finalId, tone)
   }
 
+  function checkTypingText(pinyinText: string, tone?: number): 'correct' | 'wrong' {
+    const round = currentRoundData.value
+    if (!round || state.phase !== 'playing' || !round.targetSyllable) return 'wrong'
+
+    round.clicksThisRound++
+    state.totalClicks++
+
+    const normalized = pinyinText.trim().toLowerCase()
+    const target = round.targetSyllable.toLowerCase()
+
+    if (normalized !== target) {
+      state.combo = 0
+      return 'wrong'
+    }
+
+    if (round.targetTone !== undefined && tone !== round.targetTone) {
+      state.combo = 0
+      return 'wrong'
+    }
+
+    return applyCorrectAnswer()
+  }
+
   function applyCorrectAnswer(): 'correct' {
     const round = currentRoundData.value!
     if (round.clicksThisRound === 1) {
@@ -305,6 +328,7 @@ export function useKingdomGameEngine(gameConfig: Ref<GameConfig | null>) {
     selectAnswer,
     checkSpelling,
     checkTyping,
+    checkTypingText,
     nextRound,
     replayAudio,
     resetGame,
