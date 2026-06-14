@@ -9,6 +9,7 @@ import { initials } from '@/data/initials'
 import { singleFinals, compoundFinals } from '@/data/finals'
 import { syllableCombinations } from '@/data/syllableCombinations'
 import { getBestSpeech } from '@/utils/syllableChars'
+import { getAvailableMedials, medialDisplay } from '@/utils/pinyinFilter'
 
 interface RoundData {
   target: PinyinElement
@@ -19,6 +20,7 @@ interface RoundData {
   targetSyllable?: string
   targetTone?: number        // 0-3 for tone-required mode
   initialOptions?: PinyinElement[]
+  medialOptions?: PinyinElement[]    // 介母选项 (only set when syllable has a medial)
   finalOptions?: PinyinElement[]
 }
 
@@ -47,8 +49,12 @@ function generateRecognitionRounds(config: GameConfig): RoundData[] {
   const usedTargets = new Set<string>()
 
   for (let i = 0; i < config.roundsPerGame; i++) {
-    const available = config.pool.filter(p => !usedTargets.has(p.id))
-    if (available.length === 0) break
+    let available = config.pool.filter(p => !usedTargets.has(p.id))
+    // When pool is exhausted, allow repeats to ensure we always generate roundsPerGame rounds
+    // (star thresholds are calibrated for the full round count)
+    if (available.length === 0) {
+      available = config.pool
+    }
 
     const target = pickRandom(available, 1)[0]!
     usedTargets.add(target.id)
@@ -83,12 +89,15 @@ function generateSyllableRounds(config: GameConfig): RoundData[] {
     let decomp: SyllableComponent | undefined
 
     if (hasFixedPool) {
-      const available = config.syllablePool!.filter(s => !used.has(s))
-      if (available.length === 0) break
+      let available = config.syllablePool!.filter(s => !used.has(s))
+      // When pool is exhausted, allow repeats so we always generate roundsPerGame rounds
+      if (available.length === 0) {
+        available = config.syllablePool!
+      }
       syllable = pickRandom(available, 1)[0]!
-      used.add(syllable)
       decomp = findSyllableDecomp(syllable)
       if (!decomp) continue
+      used.add(syllable)
     } else {
       // Dynamic generation: randomly combine initial + final
       let attempts = 0
@@ -99,10 +108,14 @@ function generateSyllableRounds(config: GameConfig): RoundData[] {
         attempts++
         if (attempts > 50) break
       } while (used.has(syllable) || !findSyllableDecomp(syllable))
-      if (attempts > 50 && used.has(syllable)) break
-      used.add(syllable)
+      if (attempts > 50) {
+        // Allow repeats when dynamic generation is exhausted
+        used.clear()
+        continue
+      }
       decomp = findSyllableDecomp(syllable)
       if (!decomp) continue
+      used.add(syllable)
     }
 
     const targetInitial = initials.find(ini => ini.text === decomp!.initial)
@@ -112,6 +125,19 @@ function generateSyllableRounds(config: GameConfig): RoundData[] {
     // Initial options from pool + ensure target is included
     const initOptsFromPool = config.pool.filter(p => p.id !== targetInitial.id)
     const initialOpts = shuffle([targetInitial, ...pickRandom(initOptsFromPool, Math.min(config.optionCount - 1, initOptsFromPool.length))])
+
+    // Medial options — only generated when the target syllable has a medial (三拼音节)
+    let medialOpts: PinyinElement[] | undefined
+    if (decomp!.medial !== null) {
+      const validMedials = getAvailableMedials(decomp!.initial)
+      medialOpts = validMedials.map(m => ({
+        id: `medial-${m ?? 'none'}`,
+        text: medialDisplay(m),
+        category: 'final' as const,
+        pronunciation: m === null ? '无介母' : m === 'i' ? '衣' : m === 'u' ? '乌' : '鱼',
+        canBeMedial: true,
+      }))
+    }
 
     // Final options: target + random distractors
     const finalDistractors = allFinals.filter(f => f.id !== targetFinal.id)
@@ -125,6 +151,7 @@ function generateSyllableRounds(config: GameConfig): RoundData[] {
       targetSyllable: syllable,
       targetTone: config.toneRequired ? Math.floor(Math.random() * 4) : undefined,
       initialOptions: initialOpts,
+      medialOptions: medialOpts,
       finalOptions: finalOpts,
     })
   }
@@ -225,7 +252,7 @@ export function useKingdomGameEngine(gameConfig: Ref<GameConfig | null>) {
     return 'wrong'
   }
 
-  function checkSpelling(initialId: string, finalId: string, tone?: number): 'correct' | 'wrong' {
+  function checkSpelling(initialId: string, medialId: string | null, finalId: string, tone?: number): 'correct' | 'wrong' {
     const round = currentRoundData.value
     if (!round || state.phase !== 'playing' || !round.targetSyllable) return 'wrong'
 
@@ -238,21 +265,33 @@ export function useKingdomGameEngine(gameConfig: Ref<GameConfig | null>) {
     const correctInitial = round.initialOptions?.find(i => i.id === initialId)
     const correctFinal = round.finalOptions?.find(f => f.id === finalId)
 
-    if (correctInitial?.text === decomp.initial && correctFinal?.text === decomp.final) {
-      // If tone is required, check it too
-      if (round.targetTone !== undefined && tone !== round.targetTone) {
+    // Check initial and final match
+    if (correctInitial?.text !== decomp.initial || correctFinal?.text !== decomp.final) {
+      state.combo = 0
+      return 'wrong'
+    }
+
+    // Check medial match — map UI medial ID back to internal value:
+    // medial-none → null, medial-i → 'i', medial-u → 'u', medial-v → 'ü'/'v'
+    if (decomp.medial !== null) {
+      const expectedMedialId = decomp.medial === 'v' ? 'medial-v' : `medial-${decomp.medial}`
+      if (medialId !== expectedMedialId) {
         state.combo = 0
         return 'wrong'
       }
-      return applyCorrectAnswer()
     }
 
-    state.combo = 0
-    return 'wrong'
+    // If tone is required, check it too
+    if (round.targetTone !== undefined && tone !== round.targetTone) {
+      state.combo = 0
+      return 'wrong'
+    }
+
+    return applyCorrectAnswer()
   }
 
-  function checkTyping(initialId: string, finalId: string, tone?: number): 'correct' | 'wrong' {
-    return checkSpelling(initialId, finalId, tone)
+  function checkTyping(initialId: string, medialId: string | null, finalId: string, tone?: number): 'correct' | 'wrong' {
+    return checkSpelling(initialId, medialId, finalId, tone)
   }
 
   function checkTypingText(pinyinText: string, tone?: number): 'correct' | 'wrong' {

@@ -29,10 +29,17 @@ const speechSupported = speechService.isSupported()
 
 const progressColor = '#6C9BD2'
 const selectedInitial = ref<string | null>(null)
+const selectedMedial = ref<string | null>(null)
 const selectedFinal = ref<string | null>(null)
 const feedbackState = ref<'idle' | 'correct' | 'wrong'>('idle')
 const feedbackActive = ref(false)
 const roundTransitioning = ref(false)
+
+// Whether the current round has a medial (三拼音节)
+const hasMedial = computed(() => {
+  const round = currentRoundData.value
+  return !!(round?.medialOptions && round.medialOptions.length > 0)
+})
 
 const targetChar = computed(() => {
   const round = currentRoundData.value
@@ -53,15 +60,29 @@ const targetWords = computed(() => {
 function handleSelectInitial(id: string) {
   if (feedbackActive.value || roundTransitioning.value) return
   selectedInitial.value = id
+  selectedMedial.value = null
+  selectedFinal.value = null
   const round = currentRoundData.value
   const elem = round?.initialOptions?.find(o => o.id === id)
   if (elem) tapPlay(getAudioPath('initial', elem.text))
-  checkIfComplete()
+  // Auto-select medial if there's only one option (no medial needed)
+  if (!hasMedial.value) {
+    checkIfComplete()
+  }
+}
+
+function handleSelectMedial(id: string) {
+  if (feedbackActive.value || roundTransitioning.value) return
+  if (!selectedInitial.value) return
+  selectedMedial.value = id
+  selectedFinal.value = null
 }
 
 function handleSelectFinal(id: string) {
   if (feedbackActive.value || roundTransitioning.value) return
   if (!selectedInitial.value) return
+  // Require medial selection when present
+  if (hasMedial.value && !selectedMedial.value) return
   selectedFinal.value = id
   const round = currentRoundData.value
   const elem = round?.finalOptions?.find(o => o.id === id)
@@ -69,7 +90,7 @@ function handleSelectFinal(id: string) {
   checkIfComplete()
 }
 
-function playSpellingResult(initId: string, finalId: string): Promise<boolean> {
+function playSpellingResult(initId: string, medialId: string | null, finalId: string): Promise<boolean> {
   return new Promise((resolve) => {
     const round = currentRoundData.value
     if (!round) { resolve(false); return }
@@ -82,7 +103,10 @@ function playSpellingResult(initId: string, finalId: string): Promise<boolean> {
     const finalPath = getAudioPath('final', finalElem.text)
 
     // Build the combined syllable and find its Chinese character for TTS
-    const combined = initElem.text + finalElem.text
+    const medialText = medialId && round.medialOptions
+      ? (round.medialOptions.find(m => m.id === medialId)?.text ?? '')
+      : ''
+    const combined = initElem.text + medialText + finalElem.text
     const decomp = syllableCombinations.find(s => s.syllable === combined)
     const charText = decomp ? getBestChar(decomp.toneVariants, combined) : combined
 
@@ -101,17 +125,19 @@ function playSpellingResult(initId: string, finalId: string): Promise<boolean> {
 
 function checkIfComplete() {
   if (!selectedInitial.value || !selectedFinal.value) return
+  if (hasMedial.value && !selectedMedial.value) return
 
   feedbackActive.value = true
   const initId = selectedInitial.value
+  const medialId = selectedMedial.value
   const finalId = selectedFinal.value
 
   // Pause briefly, then play combined result, THEN check
   setTimeout(async () => {
-    await playSpellingResult(initId, finalId)
+    await playSpellingResult(initId, medialId, finalId)
 
     // Now check correctness after spelling audio finishes
-    const result = props.engine.checkSpelling(initId, finalId)
+    const result = props.engine.checkSpelling(initId, medialId, finalId)
 
     if (result === 'correct') {
       feedbackState.value = 'correct'
@@ -152,6 +178,7 @@ function handleReplay() {
 watch(() => state.currentRound, () => {
   nextTick(() => {
     selectedInitial.value = null
+    selectedMedial.value = null
     selectedFinal.value = null
     feedbackState.value = 'idle'
   })
@@ -222,6 +249,30 @@ watch(() => state.currentRound, () => {
         </div>
       </div>
 
+      <!-- 介母列（仅三拼音节显示） -->
+      <template v-if="hasMedial">
+        <div class="plus-sign">+</div>
+        <div class="selector-group medial-group">
+          <h3 class="selector-label">选介母</h3>
+          <div class="selector-grid medial-grid">
+            <button
+              v-for="opt in currentRoundData.medialOptions"
+              :key="opt.id"
+              class="spell-card medial-card"
+              :class="{
+                selected: selectedMedial === opt.id,
+                correct: feedbackState === 'correct' && selectedMedial === opt.id,
+                wrong: feedbackState === 'wrong' && selectedMedial === opt.id,
+              }"
+              :disabled="feedbackActive || !selectedInitial"
+              @click="handleSelectMedial(opt.id)"
+            >
+              {{ opt.text }}
+            </button>
+          </div>
+        </div>
+      </template>
+
       <div class="plus-sign">+</div>
 
       <div class="selector-group">
@@ -236,7 +287,7 @@ watch(() => state.currentRound, () => {
               correct: feedbackState === 'correct' && selectedFinal === opt.id,
               wrong: feedbackState === 'wrong' && selectedFinal === opt.id,
             }"
-            :disabled="feedbackActive || !selectedInitial"
+            :disabled="feedbackActive || !selectedInitial || (hasMedial && !selectedMedial)"
             @click="handleSelectFinal(opt.id)"
           >
             {{ opt.text }}
@@ -434,7 +485,22 @@ watch(() => state.currentRound, () => {
 
 .initial-card { background: linear-gradient(145deg, #FFFFFF, #E8F0FA); }
 
+.medial-card {
+  background: linear-gradient(145deg, #FFFFFF, #FFF3E9);
+  font-size: 1.1rem;
+}
+
 .final-card { background: linear-gradient(145deg, #FFFFFF, #E8F8EE); }
+
+.medial-grid {
+  grid-template-columns: repeat(2, 1fr);
+  max-width: 120px;
+}
+
+.medial-group {
+  min-width: 80px;
+  flex: 0 0 auto;
+}
 
 .spell-card:hover:not(:disabled) {
   border-color: var(--color-brand-orange, #FF8C42);
