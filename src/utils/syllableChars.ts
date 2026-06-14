@@ -814,6 +814,11 @@ export function getBestChar(toneVariants: readonly [string, string, string, stri
     const char = ALL_SYLLABLE_DATA[variant]?.[0]
     if (char) return char
   }
+  // Fallback: check SPEECH_HINTS for polyphone characters not in main data
+  for (const variant of toneVariants) {
+    const hint = SPEECH_HINTS[variant]
+    if (hint) return hint[0]!
+  }
   return fallback
 }
 
@@ -822,6 +827,11 @@ export function getBestEntry(toneVariants: readonly [string, string, string, str
   for (const variant of toneVariants) {
     const entry = ALL_SYLLABLE_DATA[variant]
     if (entry) return { char: entry[0], word1: entry[1], word2: entry[2] }
+  }
+  // Fallback: check SPEECH_HINTS
+  for (const variant of toneVariants) {
+    const hint = SPEECH_HINTS[variant]
+    if (hint) return { char: hint[0]!, word1: '', word2: '' }
   }
   return null
 }

@@ -193,7 +193,6 @@ watch(() => state.currentRound, () => {
     <div v-if="currentRoundData?.targetSyllable" class="char-card" :class="`state-${feedbackState}`">
       <div class="char-card-inner">
         <span class="char-big">{{ targetChar }}</span>
-        <span class="char-pinyin">{{ currentRoundData.targetSyllable }}</span>
         <span v-if="targetWords.w1" class="char-words">{{ targetWords.w1 }} · {{ targetWords.w2 }}</span>
       </div>
       <button class="listen-btn" @click="handleReplay" aria-label="再听一次发音">
@@ -344,14 +343,6 @@ watch(() => state.currentRound, () => {
   color: var(--color-text-primary, #2C3E50);
   line-height: 1.1;
   text-shadow: 0 2px 8px rgba(0,0,0,0.06);
-}
-
-.char-pinyin {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--color-text-secondary, #888);
-  margin-top: 4px;
-  letter-spacing: 1px;
 }
 
 .char-words {
